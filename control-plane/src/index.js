@@ -92,6 +92,7 @@ import {
 } from "./userAuth.js";
 import { startOutboxWorker } from "./webhookOutbox.js";
 import { buildRateLimitMiddlewareFromEnv } from "./rateLimit.js";
+import { structuredRequestLog } from "./requestLog.js";
 
 const PORT = Number(process.env.PORT) || 4000;
 
@@ -484,10 +485,28 @@ export async function createApp() {
   const app = express();
   app.use(buildCorsMiddleware());
   app.use(express.json({ limit: "2mb" }));
+  app.use(structuredRequestLog);
   const rateLimits = buildRateLimitMiddlewareFromEnv();
 
   app.get("/health", (_req, res) => {
-    res.json({ status: "ok", service: "agf-control-plane", storage: "sqlite" });
+    res.json({
+      status: "ok",
+      service: "agf-control-plane",
+      storage: "sqlite",
+      uptimeSec: Math.floor(process.uptime()),
+    });
+  });
+
+  app.get("/ready", (_req, res) => {
+    try {
+      getDb().prepare("SELECT 1").get();
+      return res.json({ status: "ready", service: "agf-control-plane" });
+    } catch (e) {
+      return res.status(503).json({
+        status: "not_ready",
+        error: e instanceof Error ? e.message : String(e),
+      });
+    }
   });
 
   // Auth endpoints use a stricter bucket; other /api routes use the general bucket.

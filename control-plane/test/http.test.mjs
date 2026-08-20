@@ -7,6 +7,7 @@ import { Readable, Writable } from "node:stream";
 
 const tempRoot = await mkdtemp(path.join(tmpdir(), "agf-control-plane-test-"));
 process.env.NODE_ENV = "test";
+process.env.CONTROL_PLANE_REQUEST_LOG = "0";
 process.env.CONTROL_PLANE_DATA = path.join(tempRoot, "data");
 process.env.SQLITE_PATH = path.join(tempRoot, "data", "control-plane.db");
 process.env.CONTROL_PLANE_JWT_SECRET = "test-jwt-secret-value-1234567890";
@@ -167,7 +168,14 @@ test("auth rate limiter returns 429 after max requests", async () => {
   delete process.env.CONTROL_PLANE_RATE_LIMIT_MAX;
 });
 
-test("agent registry create list and deactivate", async () => {
+test("readiness probe succeeds when DB is open", async () => {
+  process.env.CONTROL_PLANE_API_KEY = "test-api-key-value-1234567890";
+  const { app } = await createApp();
+  const res = await callApp(app, { url: "/ready" });
+  assert.equal(res.statusCode, 200);
+  assert.match(res.body, /"ready"/);
+});
+
   process.env.CONTROL_PLANE_API_KEY = "test-api-key-value-1234567890";
   const { app } = await createApp();
   const auth = { Authorization: `Bearer ${process.env.CONTROL_PLANE_API_KEY}` };

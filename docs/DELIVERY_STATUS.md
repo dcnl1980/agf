@@ -13,10 +13,10 @@ Last updated: 2026-08-20 (autonomous delivery cycle)
 | Current state | Local full stack **verified**; Phase A–D + E.1 + Agent Registry API done |
 | Production status | Not hosted; community self-host via compose/k8s |
 | Priority | P0 (active workspace) |
-| Completion | ~78% |
-| Production readiness | ~72/100 (Beta / approaching production candidate) |
+| Completion | ~82% |
+| Production readiness | ~76/100 (Beta / approaching production candidate) |
 | Status | 🟡 Needs attention |
-| Git | **No `.git` at repo root** — commits/PRs blocked until VCS initialized + remote |
+| Git | Local git on `main` (2+ commits); **no remote** yet — PR push blocked |
 | Last validation | `npm test` (control-plane, 7/7) + `scripts/verify-stack.sh` (local Docker) |
 
 ## Definition of Done (community edition)
@@ -28,7 +28,7 @@ Last updated: 2026-08-20 (autonomous delivery cycle)
 - [x] CORS + in-process rate limits + SECURITY.md + CP CI workflow
 - [x] Agent Registry MVP API (create/list/update/deactivate; evaluate rejects unknown/inactive agentId)
 - [x] Agent Registry UI in dashboard
-- [ ] Observability (structured logs/metrics/probes) — E.2
+- [x] Observability basics (JSON request logs + `/ready` probe) — E.2 partial; metrics/dashboards later
 - [ ] Playwright E2E — E.3
 - [ ] Hosted demo / published images — E.4
 - [ ] Git remote + CI on forge (local git initialized; no remote yet)
