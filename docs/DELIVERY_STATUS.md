@@ -27,20 +27,19 @@ Last updated: 2026-08-20 (autonomous delivery cycle)
 - [x] Catalog API + compose stack smoke
 - [x] CORS + in-process rate limits + SECURITY.md + CP CI workflow
 - [x] Agent Registry MVP API (create/list/update/deactivate; evaluate rejects unknown/inactive agentId)
-- [ ] Agent Registry UI in dashboard
+- [x] Agent Registry UI in dashboard
 - [ ] Observability (structured logs/metrics/probes) — E.2
 - [ ] Playwright E2E — E.3
 - [ ] Hosted demo / published images — E.4
-- [ ] Git remote + CI on forge
+- [ ] Git remote + CI on forge (local git initialized; no remote yet)
 - [ ] Non-mock TEE attestation for production profiles
 
 ## Gap register (executable next)
 
-1. **Agent Registry UI** — wire dashboard to agents API
-2. **E.2 Observability** — structured logs, metrics, k8s probes
-3. **E.3 Playwright E2E** — dashboard + API flows
-4. **Initialize git + remote** — external blocker for PR workflow
-5. Pin MinIO image tag (compose uses `latest`)
+1. **E.2 Observability** — structured logs, metrics, k8s probes
+2. **E.3 Playwright E2E** — dashboard + API flows
+3. **Push remote** — needs forge project URL / credentials
+4. Hosted demo / image publish
 
 ## Portfolio note
 

@@ -464,6 +464,67 @@ export async function fetchApprovals(
   return getJson(`${customerBase(customerId)}/approvals`);
 }
 
+export type AgentRow = {
+  agentId: string;
+  customerId: string;
+  name: string;
+  status: string;
+  orgId: string | null;
+  channels: string[];
+  metadata: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export async function fetchAgents(
+  customerId: string = DEFAULT_CUSTOMER_ID,
+  opts: { includeInactive?: boolean } = {}
+): Promise<{ items: AgentRow[] }> {
+  const q = opts.includeInactive ? "?includeInactive=1" : "";
+  return getJson(`${customerBase(customerId)}/agents${q}`);
+}
+
+export async function registerAgent(
+  input: {
+    agent_name: string;
+    org_id?: string;
+    channels?: string[];
+    metadata?: Record<string, unknown>;
+  },
+  customerId: string = DEFAULT_CUSTOMER_ID
+): Promise<{ agent_id: string; status: string; agent: AgentRow }> {
+  const res = await withAuthFetch(`${customerBase(customerId)}/agents`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  if (res.status === 401) {
+    redirectUnauthorized();
+  }
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error(t || `register agent failed: ${res.status}`);
+  }
+  return res.json() as Promise<{ agent_id: string; status: string; agent: AgentRow }>;
+}
+
+export async function deactivateAgent(
+  agentId: string,
+  customerId: string = DEFAULT_CUSTOMER_ID
+): Promise<{ agent_id: string; status: string }> {
+  const res = await withAuthFetch(`${customerBase(customerId)}/agents/${encodeURIComponent(agentId)}/deactivate`, {
+    method: "POST",
+  });
+  if (res.status === 401) {
+    redirectUnauthorized();
+  }
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error(t || `deactivate failed: ${res.status}`);
+  }
+  return res.json() as Promise<{ agent_id: string; status: string }>;
+}
+
 export async function fetchKernelHealth(): Promise<KernelHealth> {
   return getJson(`${API}/v1/kernel/health`);
 }

@@ -15,22 +15,27 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import {
   DEFAULT_CUSTOMER_ID,
+  deactivateAgent,
   downloadEvidenceExport,
   downloadEvidenceExportByJobId,
+  fetchAgents,
   fetchApprovals,
   fetchDashboardSummary,
   fetchDecisions,
   fetchEvidenceExportJobs,
   fetchKernelHealth,
+  registerAgent,
   resolveApproval,
   runEvaluate,
   startAsyncEvidenceExport,
+  type AgentRow,
   type ApprovalRow,
   type DecisionRow,
   type ExportJobListItem,
   type KernelHealth,
 } from "../lib/controlPlaneApi";
 import { DEMO_ACME_ENTITY_DATA } from "../lib/demoEntityData";
+import { Input } from "../components/ui/input";
 
 function formatBps(bps: number) {
   return `${(bps / 100).toFixed(1)}%`;
@@ -40,6 +45,7 @@ export default function DashboardPage() {
   const [summary, setSummary] = useState<Awaited<ReturnType<typeof fetchDashboardSummary>> | null>(null);
   const [decisions, setDecisions] = useState<DecisionRow[]>([]);
   const [approvals, setApprovals] = useState<ApprovalRow[]>([]);
+  const [agents, setAgents] = useState<AgentRow[]>([]);
   const [kernel, setKernel] = useState<KernelHealth | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -48,12 +54,14 @@ export default function DashboardPage() {
   const [evalHint, setEvalHint] = useState<string | null>(null);
   const [exportJobs, setExportJobs] = useState<ExportJobListItem[]>([]);
   const [exportBusy, setExportBusy] = useState(false);
+  const [newAgentName, setNewAgentName] = useState("");
+  const [agentBusy, setAgentBusy] = useState(false);
 
   const load = useCallback(async () => {
     setErr(null);
     setLoading(true);
     try {
-      const [s, d, a, k, ex] = await Promise.all([
+      const [s, d, a, k, ex, ag] = await Promise.all([
         fetchDashboardSummary(),
         fetchDecisions(),
         fetchApprovals(),
@@ -63,12 +71,16 @@ export default function DashboardPage() {
           error: "unavailable",
         })),
         fetchEvidenceExportJobs().catch((): { items: ExportJobListItem[] } => ({ items: [] })),
+        fetchAgents(DEFAULT_CUSTOMER_ID, { includeInactive: true }).catch((): { items: AgentRow[] } => ({
+          items: [],
+        })),
       ]);
       setSummary(s);
       setDecisions(d.items);
       setApprovals(a.items.filter((x) => x.status === "pending"));
       setKernel(k);
       setExportJobs(ex.items);
+      setAgents(ag.items);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Failed to load dashboard");
     } finally {
@@ -111,6 +123,40 @@ export default function DashboardPage() {
       setErr(e instanceof Error ? e.message : "Evaluation failed (is AGF running on :3000?)");
     } finally {
       setEvalLoading(false);
+    }
+  };
+
+  const onRegisterAgent = async () => {
+    const name = newAgentName.trim();
+    if (!name) {
+      return;
+    }
+    setAgentBusy(true);
+    setErr(null);
+    try {
+      await registerAgent(
+        { agent_name: name, channels: ["api"], metadata: { source: "dashboard" } },
+        DEFAULT_CUSTOMER_ID
+      );
+      setNewAgentName("");
+      await load();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Register agent failed");
+    } finally {
+      setAgentBusy(false);
+    }
+  };
+
+  const onDeactivateAgent = async (agentId: string) => {
+    setAgentBusy(true);
+    setErr(null);
+    try {
+      await deactivateAgent(agentId, DEFAULT_CUSTOMER_ID);
+      await load();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Deactivate failed");
+    } finally {
+      setAgentBusy(false);
     }
   };
 
@@ -420,6 +466,71 @@ export default function DashboardPage() {
                                 }
                               >
                                 JSON
+                              </Button>
+                            ) : (
+                              <span className="text-ink-muted text-xs">—</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="bg-surface-card border-border mt-6">
+            <CardHeader>
+              <CardTitle className="text-lg text-white">Agent registry</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Input
+                  value={newAgentName}
+                  onChange={(e) => setNewAgentName(e.target.value)}
+                  placeholder="Agent name (e.g. payments-orchestrator)"
+                  className="flex-1"
+                />
+                <Button type="button" disabled={agentBusy || !newAgentName.trim()} onClick={() => void onRegisterAgent()}>
+                  Register
+                </Button>
+              </div>
+              {loading && !agents.length ? (
+                <p className="text-ink-secondary text-sm m-0">Loading…</p>
+              ) : agents.length === 0 ? (
+                <p className="text-ink-muted text-sm m-0">No agents registered for this org yet.</p>
+              ) : (
+                <div className="overflow-x-auto border border-border rounded-lg">
+                  <table className="w-full text-sm m-0">
+                    <thead>
+                      <tr className="border-b border-border text-left text-ink-muted">
+                        <th className="p-2 font-medium">Name</th>
+                        <th className="p-2 font-medium">ID</th>
+                        <th className="p-2 font-medium">Status</th>
+                        <th className="p-2 font-medium">Channels</th>
+                        <th className="p-2 font-medium">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {agents.map((a) => (
+                        <tr key={a.agentId} className="border-b border-border/50">
+                          <td className="p-2 text-white">{a.name}</td>
+                          <td className="p-2 font-mono text-xs text-ink-secondary">{a.agentId}</td>
+                          <td className="p-2">
+                            <Badge variant={a.status === "active" ? "default" : "secondary"}>{a.status}</Badge>
+                          </td>
+                          <td className="p-2 text-xs text-ink-secondary">{a.channels?.join(", ") || "—"}</td>
+                          <td className="p-2">
+                            {a.status === "active" ? (
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                disabled={agentBusy}
+                                onClick={() => void onDeactivateAgent(a.agentId)}
+                              >
+                                Deactivate
                               </Button>
                             ) : (
                               <span className="text-ink-muted text-xs">—</span>
