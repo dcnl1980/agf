@@ -47,7 +47,13 @@ docker volume rm agf_control_plane_data
 3. Apply kernel (`02-deployment*.yaml`), control plane (`11-control-plane.yaml`), website (`10-website.yaml`)
 4. Confirm TEE claims with `deploy/k8s/verify-production-truth.sh` before marketing hardware attestation
 
+Image sources: NeuroCluster registry (`registry.neurocluster.dev/agf-*`) or community GHCR (`ghcr.io/dcnl1980/agf-*`). Pin digests in production.
+
 Production must set `NODE_ENV=production` and a strong `CONTROL_PLANE_JWT_SECRET` (compose defaults are refused).
+
+### TEE claim boundary
+
+Default kernel profiles set `AGF_TEE_MODE=mock`. Do **not** claim hardware attestation until `PROFILE=confidential-snp` (or equivalent) passes `deploy/k8s/verify-production-truth.sh` on SNP/TDX-capable nodes.
 
 ## Incident notes
 

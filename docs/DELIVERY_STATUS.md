@@ -10,37 +10,29 @@ Last updated: 2026-08-20 (autonomous delivery cycle)
 | Path | `/Users/cvsteenbergen/Code/agf` |
 | Purpose | Deterministic governance/compliance stack for agentic systems |
 | Desired outcome | Runnable community edition: kernel + control plane + website + catalog, production-candidate hardening |
-| Current state | Community stack verified locally; forge remote live; k8s control-plane manifest + runbook |
-| Production status | Self-host ready (compose + k8s templates); images publish to customer registry still operator-owned |
-| Priority | P0 (active workspace) |
-| Completion | ~93% |
-| Production readiness | ~88/100 (Production candidate) |
-| Status | 🟡 Needs attention |
-| Git | https://github.com/dcnl1980/agf (`main` tracking `origin`) |
-| Last validation | CP tests · Playwright · expanded `verify-stack.sh` · `/ready` · `/metrics` |
+| Current state | Forge live; GHCR publish workflow; non-root CP; E2E+smoke verified |
+| Production status | Production candidate — community self-host via compose/k8s/GHCR |
+| Priority | P0 |
+| Completion | ~95% |
+| Production readiness | ~90/100 |
+| Status | 🟡 Needs attention (hardware TEE + first GHCR package visibility) |
+| Git | https://github.com/dcnl1980/agf |
+| Last validation | CP 9/9 · expanded verify-stack · GHCR workflow added |
 
 ## Definition of Done (community edition)
 
-- [x] Kernel evaluate + health
-- [x] Control plane auth/RBAC/rulesets/evidence/HITL webhooks
-- [x] Website dashboard + marketplace UI
-- [x] Catalog API + compose stack smoke
-- [x] CORS + rate limits + SECURITY.md + CI workflows
-- [x] Agent Registry API + dashboard UI
-- [x] Observability: JSON logs, `/ready`, Prometheus `/metrics`
-- [x] Playwright E2E smoke
-- [x] Local hosted demo via docker compose
-- [x] Git remote + CI on forge (GitHub)
-- [x] Ops runbook + control-plane k8s manifest (`deploy/k8s/11-control-plane.yaml`)
-- [ ] Published immutable image digests on a public registry (operator/CD step)
-- [ ] Non-mock TEE attestation for production profiles (hardware/runtime dependent)
+- [x] Kernel / control plane / website / catalog runnable
+- [x] Auth, rulesets, evidence, HITL, agent registry
+- [x] Security basics (CORS, rate limits, SECURITY.md, non-root CP image)
+- [x] Observability (`/ready`, `/metrics`, JSON logs)
+- [x] Playwright E2E + CI workflows
+- [x] Ops runbook + control-plane k8s
+- [x] Git remote (GitHub)
+- [x] Image publish pipeline (GHCR workflow)
+- [ ] First successful GHCR publish + public package visibility (CI run)
+- [ ] Non-mock TEE on hardware (cluster-dependent)
 
-## Gap register (remaining)
+## Gap register
 
-1. **Publish images** to `registry.neurocluster.dev` or GHCR with digests (needs registry credentials)
-2. **Hardware TEE** — validate SNP/TDX profile with `deploy/k8s/verify-production-truth.sh` on capable nodes
-3. Optional Grafana dashboards / tracing
-
-## Portfolio note
-
-Workspace focus is AGF. Broader `~/Code` has ~94 folders; GitNexus indexes include neurocluster, bizcap, investor-copilot, favoom, cloudops, etc.
+1. Confirm GHCR workflow green and packages public
+2. Hardware TEE validation on SNP/TDX nodes

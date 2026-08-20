@@ -50,6 +50,8 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: control-plane
+          # Default registry path for NeuroCluster; community CI also publishes
+          # ghcr.io/dcnl1980/agf-control-plane:<tag|sha>
           image: registry.neurocluster.dev/agf-control-plane:latest
           imagePullPolicy: Always
           ports:

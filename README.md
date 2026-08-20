@@ -29,6 +29,17 @@ This repository is the **community edition** of AGF under Apache-2.0.
 5. Open marketplace (Phase C UI):
    - `http://127.0.0.1:8088/marketplace`
 
+### Prebuilt images (GHCR)
+
+CI publishes multi-image packages on `main`:
+
+- `ghcr.io/dcnl1980/agf-server`
+- `ghcr.io/dcnl1980/agf-control-plane`
+- `ghcr.io/dcnl1980/agf-website`
+- `ghcr.io/dcnl1980/agf-catalog-api`
+
+Prefer digests (`sha-…` tags) for production. If packages are private on first publish, set visibility to public in GitHub Packages settings.
+
 Main services:
 
 - website: `http://127.0.0.1:${WEBSITE_HOST_PORT:-8088}` (also proxies `/catalog/` to the [catalog HTTP API](catalog-api/README.md), e.g. `/catalog/v1/entries`)

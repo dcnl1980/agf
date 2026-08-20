@@ -11,10 +11,11 @@ This matrix is the default claim boundary for product, sales, and documentation.
 | Hash-chained audit integrity | Live today | Safe to claim with storage/deployment caveat |
 | Local API runtime (`/evaluate`, `/evaluate-entity`, `/public-key`) | Live today | Safe to claim as implemented and tested |
 | Isolated runtime profile (Kata/no-egress) | Deployment-dependent live profile | Claim as validated profile, not universal default in all environments |
-| Ruleset lifecycle governance | Control-plane feature (to ship as product surface) | Safe to position as required architecture; avoid implying full product parity until shipped |
+| Ruleset lifecycle governance | Live today (control plane + dashboard) | Safe to claim for community edition |
 | ZK proof generation in policy path | Prototype / optional | Do not present as default production path |
-| Hardware-rooted TEE attestation | Roadmap / premium assurance | Do not present as live production guarantee |
+| Hardware-rooted TEE attestation | Roadmap / premium assurance (`AGF_TEE_MODE=mock` in default profiles) | Do not present as live production guarantee |
 | HSM/KMS-backed signing | Roadmap / deployment-specific | Do not present as always-on in current baseline |
+| Published container images | GHCR via CI (`ghcr.io/<owner>/agf-*`) | Prefer digest pins in production; `latest` is convenience only |
 
 ## Messaging Rules
 
