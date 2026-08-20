@@ -70,6 +70,10 @@ services:
       CONTROL_PLANE_JWT_SECRET: ${CONTROL_PLANE_JWT_SECRET:-dev-docker-compose-change-in-prod-32ch}
       # Rules validation: host must build arsl-validate under agf-sp1/target, or skip in dev
       CONTROL_PLANE_SKIP_ARSL_VALIDATE: ${CONTROL_PLANE_SKIP_ARSL_VALIDATE:-1}
+      CONTROL_PLANE_SEED_DEV_DATA: ${CONTROL_PLANE_SEED_DEV_DATA:-1}
+      CONTROL_PLANE_BOOTSTRAP_EMAIL: ${CONTROL_PLANE_BOOTSTRAP_EMAIL:-}
+      CONTROL_PLANE_BOOTSTRAP_PASSWORD: ${CONTROL_PLANE_BOOTSTRAP_PASSWORD:-}
+      CONTROL_PLANE_BOOTSTRAP_CUSTOMER: ${CONTROL_PLANE_BOOTSTRAP_CUSTOMER:-cust_dev}
     volumes:
       - control_plane_data:/data
       - ./agf-sp1:/agf-sp1:ro

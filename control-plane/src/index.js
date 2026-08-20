@@ -509,6 +509,47 @@ export async function createApp() {
     }
   });
 
+  /** Prometheus text exposition (basic process + domain counters). */
+  app.get("/metrics", (_req, res) => {
+    try {
+      const db = getDb();
+      const decisions = Number(db.prepare("SELECT COUNT(*) AS n FROM decisions").get()?.n || 0);
+      const pendingApprovals = Number(
+        db.prepare("SELECT COUNT(*) AS n FROM approvals WHERE status = 'pending'").get()?.n || 0
+      );
+      const agents = Number(db.prepare("SELECT COUNT(*) AS n FROM agents WHERE status = 'active'").get()?.n || 0);
+      const users = Number(db.prepare("SELECT COUNT(*) AS n FROM users").get()?.n || 0);
+      const mem = process.memoryUsage();
+      const lines = [
+        "# HELP agf_control_plane_up 1 if process is serving",
+        "# TYPE agf_control_plane_up gauge",
+        "agf_control_plane_up 1",
+        "# HELP agf_control_plane_uptime_seconds Process uptime",
+        "# TYPE agf_control_plane_uptime_seconds gauge",
+        `agf_control_plane_uptime_seconds ${process.uptime().toFixed(3)}`,
+        "# HELP agf_control_plane_decisions_total Persisted decision records",
+        "# TYPE agf_control_plane_decisions_total gauge",
+        `agf_control_plane_decisions_total ${decisions}`,
+        "# HELP agf_control_plane_approvals_pending Pending HITL approvals",
+        "# TYPE agf_control_plane_approvals_pending gauge",
+        `agf_control_plane_approvals_pending ${pendingApprovals}`,
+        "# HELP agf_control_plane_agents_active Active registered agents",
+        "# TYPE agf_control_plane_agents_active gauge",
+        `agf_control_plane_agents_active ${agents}`,
+        "# HELP agf_control_plane_users_total User accounts",
+        "# TYPE agf_control_plane_users_total gauge",
+        `agf_control_plane_users_total ${users}`,
+        "# HELP agf_control_plane_nodejs_heap_used_bytes Node.js heap used",
+        "# TYPE agf_control_plane_nodejs_heap_used_bytes gauge",
+        `agf_control_plane_nodejs_heap_used_bytes ${mem.heapUsed}`,
+      ];
+      res.setHeader("content-type", "text/plain; version=0.0.4; charset=utf-8");
+      return res.status(200).send(`${lines.join("\n")}\n`);
+    } catch (e) {
+      return res.status(500).type("text/plain").send(`# metrics_error ${e instanceof Error ? e.message : String(e)}\n`);
+    }
+  });
+
   // Auth endpoints use a stricter bucket; other /api routes use the general bucket.
   app.use((req, res, next) => {
     if (req.path.startsWith("/api/v1/auth")) {

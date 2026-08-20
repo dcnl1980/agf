@@ -20,3 +20,9 @@ control-plane/data/
 tmp/
 *.log
 npm-debug.log*
+
+# Playwright
+website/playwright-report/
+website/test-results/
+website/blob-report/
+website/playwright/.cache/

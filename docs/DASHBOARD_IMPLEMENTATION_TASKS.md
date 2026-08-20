@@ -59,8 +59,8 @@ This is the working backlog to turn the **specs** into a **runnable** Agentic AI
 ## Phase E — Hardening & GTM
 
 | E.1 | **SPA API base in production** (no Vite proxy) + rate limits, audit log, CORS | **Done** (product-scoped) — `VITE_CONTROL_PLANE_API_BASE` or same-origin nginx `/api`; CORS via `CONTROL_PLANE_CORS_ORIGINS`; in-process rate limits (`CONTROL_PLANE_RATE_LIMIT_*` / auth bucket); org `audit_log` + `GET .../audit`. **Not** in scope: distributed rate store, WAF rules |
-| E.2 | **Observability**: structured logs, metrics, health checks for K8s | **Later** |
-| E.3 | **E2E tests** (Playwright) for dashboard + API | **Later** |
+| E.2 | **Observability**: structured logs, metrics, health checks for K8s | **Partial** — JSON request logs, `/health` + `/ready`, Prometheus text `/metrics` (decision/approval/agent/user gauges). **Not** in scope: Grafana dashboards, distributed tracing |
+| E.3 | **E2E tests** (Playwright) for dashboard + API | **Done** (product-scoped) — `website/e2e/smoke.spec.ts` + `npm run test:e2e`; CI workflow `.github/workflows/e2e.yml` (compose + Playwright). Covers home, marketplace, login, `/ready`+`/metrics`, and authenticated dashboard agent registry |
 | E.4 | **Hosted demo** or single-command `docker compose` for marketing | **Later** |
 
 ---

@@ -176,6 +176,15 @@ test("readiness probe succeeds when DB is open", async () => {
   assert.match(res.body, /"ready"/);
 });
 
+test("metrics endpoint exposes prometheus counters", async () => {
+  process.env.CONTROL_PLANE_API_KEY = "test-api-key-value-1234567890";
+  const { app } = await createApp();
+  const res = await callApp(app, { url: "/metrics" });
+  assert.equal(res.statusCode, 200);
+  assert.match(res.body, /agf_control_plane_up 1/);
+  assert.match(res.body, /agf_control_plane_decisions_total/);
+});
+
 test("agent registry create list and deactivate", async () => {
   process.env.CONTROL_PLANE_API_KEY = "test-api-key-value-1234567890";
   const { app } = await createApp();
