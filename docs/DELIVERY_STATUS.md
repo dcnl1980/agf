@@ -13,8 +13,8 @@ Last updated: 2026-08-20 (autonomous delivery cycle)
 | Current state | Local full stack **verified**; E.1–E.3 + Agent Registry + metrics |
 | Production status | Not hosted; community self-host via compose/k8s |
 | Priority | P0 (active workspace) |
-| Completion | ~88% |
-| Production readiness | ~82/100 (Production candidate) |
+| Completion | ~90% |
+| Production readiness | ~84/100 (Production candidate) |
 | Status | 🟡 Needs attention |
 | Git | Local `main`; **no remote** — push/PR blocked |
 | Last validation | CP tests 9/9 · Playwright 6/6 · `verify-stack.sh` · `/ready` · `/metrics` |
@@ -29,14 +29,14 @@ Last updated: 2026-08-20 (autonomous delivery cycle)
 - [x] Agent Registry MVP API + dashboard UI
 - [x] Observability: JSON logs, `/ready`, Prometheus `/metrics`
 - [x] Playwright E2E smoke (home, marketplace, login, dashboard)
-- [ ] Hosted demo / published images — E.4
+- [x] Local hosted demo via docker compose (E.4 local); published registry images still open
 - [ ] Git remote + CI on forge
 - [ ] Non-mock TEE attestation for production profiles
 
 ## Gap register (executable next)
 
 1. **Push remote** — needs forge project URL / credentials
-2. Hosted demo / published images (E.4)
+2. Published container images to a registry (E.4 remainder)
 3. Non-mock TEE for production profiles
 4. Optional: Grafana/tracing beyond `/metrics`
 
