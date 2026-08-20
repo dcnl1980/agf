@@ -25,6 +25,8 @@ echo "=== AGF stack E2E (curl) ==="
 # Catalog API (Phase B) and website /catalog/ proxy need `docker compose up` (or `node catalog-api/server.mjs` for :4055 + rebuilt website image for nginx).
 check "AGF kernel /health" "http://127.0.0.1:${K}/health"
 check "Control plane /health" "http://127.0.0.1:${C}/health"
+check "Control plane /ready" "http://127.0.0.1:${C}/ready"
+check "Control plane /metrics" "http://127.0.0.1:${C}/metrics"
 check "Control plane /api/v1/public/config" "http://127.0.0.1:${C}/api/v1/public/config"
 check "MinIO S3 /minio/health/live" "http://127.0.0.1:${S3}/minio/health/live"
 check "Website (nginx) /" "http://127.0.0.1:${W}/"
@@ -36,6 +38,18 @@ if curl -fsS -m 8 "http://127.0.0.1:${C}/api/v1/public/config" | grep -q jwtSign
   echo "OK  public config JSON contains jwtSigningConfigured"
 else
   echo "FAIL public config JSON" >&2
+  fail=1
+fi
+if curl -fsS -m 8 "http://127.0.0.1:${C}/metrics" | grep -q 'agf_control_plane_up 1'; then
+  echo "OK  metrics contain agf_control_plane_up 1"
+else
+  echo "FAIL metrics agf_control_plane_up" >&2
+  fail=1
+fi
+if curl -fsS -m 8 "http://127.0.0.1:${C}/ready" | grep -q '"ready"'; then
+  echo "OK  ready JSON contains ready"
+else
+  echo "FAIL ready JSON" >&2
   fail=1
 fi
 if [ "$fail" -ne 0 ]; then

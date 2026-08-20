@@ -64,6 +64,7 @@ Template assets live under:
 - Community catalog source of truth: `/Users/cvsteenbergen/Code/agf/catalog/community-catalog.json`
 - API contracts: `/Users/cvsteenbergen/Code/agf/docs/API_CONTRACTS.md`
 - Control-plane details: `/Users/cvsteenbergen/Code/agf/control-plane/README.md`
+- Operations runbook: `/Users/cvsteenbergen/Code/agf/docs/RUNBOOK.md`
 - Technical whitepaper: `/Users/cvsteenbergen/Code/agf/docs/WHITEPAPER.md`
 
 ## Support
