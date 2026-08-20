@@ -52,6 +52,8 @@ The control plane does not require MinIO today (exports are written under `data/
 | Method | Path | Purpose |
 |--------|------|---------|
 | GET | `/health` | Process liveness |
+| GET | `/ready` | SQLite readiness probe |
+| GET | `/metrics` | Prometheus text metrics (decisions, approvals, agents, users, heap) |
 | GET | `/api/v1/customers/:customerId/dashboard/summary` | KPIs |
 | GET | `/api/v1/customers/:customerId/decisions` | Recent decisions (persisted) |
 | POST | `/api/v1/customers/:customerId/evaluate` | Resolve bundle → `POST` AGF `/evaluate-entity` → store row |

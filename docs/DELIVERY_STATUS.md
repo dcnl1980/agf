@@ -10,14 +10,14 @@ Last updated: 2026-08-20 (autonomous delivery cycle)
 | Path | `/Users/cvsteenbergen/Code/agf` |
 | Purpose | Deterministic governance/compliance stack for agentic systems |
 | Desired outcome | Runnable community edition: kernel + control plane + website + catalog, production-candidate hardening |
-| Current state | Local full stack **verified**; Phase A–E.1 + Agent Registry + basic observability |
+| Current state | Local full stack **verified**; E.1–E.3 + Agent Registry + metrics |
 | Production status | Not hosted; community self-host via compose/k8s |
 | Priority | P0 (active workspace) |
-| Completion | ~82% |
-| Production readiness | ~76/100 (Production candidate band entry) |
+| Completion | ~88% |
+| Production readiness | ~82/100 (Production candidate) |
 | Status | 🟡 Needs attention |
-| Git | Local `main` (4 commits); **no remote** — push/PR blocked |
-| Last validation | `npm test` (control-plane, 8/8) + `scripts/verify-stack.sh` + `/ready` |
+| Git | Local `main`; **no remote** — push/PR blocked |
+| Last validation | CP tests 9/9 · Playwright 6/6 · `verify-stack.sh` · `/ready` · `/metrics` |
 
 ## Definition of Done (community edition)
 
@@ -26,21 +26,20 @@ Last updated: 2026-08-20 (autonomous delivery cycle)
 - [x] Website dashboard + marketplace UI
 - [x] Catalog API + compose stack smoke
 - [x] CORS + in-process rate limits + SECURITY.md + CP CI workflow
-- [x] Agent Registry MVP API (create/list/update/deactivate; evaluate rejects unknown/inactive agentId)
-- [x] Agent Registry UI in dashboard
-- [x] Observability basics (JSON request logs + `/ready` probe) — E.2 partial; metrics/dashboards later
-- [ ] Playwright E2E — E.3
+- [x] Agent Registry MVP API + dashboard UI
+- [x] Observability: JSON logs, `/ready`, Prometheus `/metrics`
+- [x] Playwright E2E smoke (home, marketplace, login, dashboard)
 - [ ] Hosted demo / published images — E.4
-- [ ] Git remote + CI on forge (local git initialized; no remote yet)
+- [ ] Git remote + CI on forge
 - [ ] Non-mock TEE attestation for production profiles
 
 ## Gap register (executable next)
 
-1. **E.3 Playwright E2E** — dashboard + API flows
-2. **Push remote** — needs forge project URL / credentials
-3. Metrics/dashboards (E.2 remainder) + hosted demo / image publish
-4. Non-mock TEE for production profiles
+1. **Push remote** — needs forge project URL / credentials
+2. Hosted demo / published images (E.4)
+3. Non-mock TEE for production profiles
+4. Optional: Grafana/tracing beyond `/metrics`
 
 ## Portfolio note
 
-Workspace focus is AGF. Broader `~/Code` has ~94 folders; GitNexus indexes include neurocluster, bizcap, investor-copilot, favoom, cloudops, etc. Cross-link: neurocluster previously referenced AGF kernel images.
+Workspace focus is AGF. Broader `~/Code` has ~94 folders; GitNexus indexes include neurocluster, bizcap, investor-copilot, favoom, cloudops, etc.
