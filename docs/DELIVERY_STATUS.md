@@ -10,14 +10,14 @@ Last updated: 2026-08-20 (autonomous delivery cycle)
 | Path | `/Users/cvsteenbergen/Code/agf` |
 | Purpose | Deterministic governance/compliance stack for agentic systems |
 | Desired outcome | Runnable community edition: kernel + control plane + website + catalog, production-candidate hardening |
-| Current state | Local full stack **verified**; Phase A–D + E.1 + Agent Registry API done |
+| Current state | Local full stack **verified**; Phase A–E.1 + Agent Registry + basic observability |
 | Production status | Not hosted; community self-host via compose/k8s |
 | Priority | P0 (active workspace) |
 | Completion | ~82% |
-| Production readiness | ~76/100 (Beta / approaching production candidate) |
+| Production readiness | ~76/100 (Production candidate band entry) |
 | Status | 🟡 Needs attention |
-| Git | Local git on `main` (2+ commits); **no remote** yet — PR push blocked |
-| Last validation | `npm test` (control-plane, 7/7) + `scripts/verify-stack.sh` (local Docker) |
+| Git | Local `main` (4 commits); **no remote** — push/PR blocked |
+| Last validation | `npm test` (control-plane, 8/8) + `scripts/verify-stack.sh` + `/ready` |
 
 ## Definition of Done (community edition)
 
@@ -36,10 +36,10 @@ Last updated: 2026-08-20 (autonomous delivery cycle)
 
 ## Gap register (executable next)
 
-1. **E.2 Observability** — structured logs, metrics, k8s probes
-2. **E.3 Playwright E2E** — dashboard + API flows
-3. **Push remote** — needs forge project URL / credentials
-4. Hosted demo / image publish
+1. **E.3 Playwright E2E** — dashboard + API flows
+2. **Push remote** — needs forge project URL / credentials
+3. Metrics/dashboards (E.2 remainder) + hosted demo / image publish
+4. Non-mock TEE for production profiles
 
 ## Portfolio note
 
