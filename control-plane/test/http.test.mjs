@@ -176,6 +176,7 @@ test("readiness probe succeeds when DB is open", async () => {
   assert.match(res.body, /"ready"/);
 });
 
+test("agent registry create list and deactivate", async () => {
   process.env.CONTROL_PLANE_API_KEY = "test-api-key-value-1234567890";
   const { app } = await createApp();
   const auth = { Authorization: `Bearer ${process.env.CONTROL_PLANE_API_KEY}` };
