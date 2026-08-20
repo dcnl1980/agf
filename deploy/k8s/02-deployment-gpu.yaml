@@ -1,0 +1,137 @@
+# AGF Evaluator Deployment — gpu-scoped truth profile
+#
+# This profile is the strongest truthful deployment currently available
+# on the live cluster:
+# - runtime isolation: Kata QEMU on `gpunode`
+# - outbound network path: fail-closed inside the pod network namespace
+# - TEE / hardware attestation: NOT provided
+#
+# This profile deliberately does not claim SEV-SNP or hardware-rooted
+# attestation, because the cluster runtime and application path do not
+# prove that today.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agf-signing-config
+  namespace: agf-gpu
+data:
+  RUST_LOG: "agf_server=info,tower_http=warn"
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agf-evaluator
+  namespace: agf-gpu
+  labels:
+    app: agf-evaluator
+    app.kubernetes.io/part-of: agf
+    agf.neurocluster.io/profile: gpu-truth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agf-evaluator
+  template:
+    metadata:
+      labels:
+        app: agf-evaluator
+        agf.neurocluster.io/profile: gpu-truth
+        agf.neurocluster.io/sandbox: "kata-qemu"
+    spec:
+      runtimeClassName: kata-qemu
+      nodeSelector:
+        katacontainers.io/kata-runtime: "true"
+        kubernetes.io/hostname: gpunode
+      automountServiceAccountToken: false
+      initContainers:
+        - name: lockdown-egress
+          image: docker.io/library/alpine:3.20
+          command:
+            - sh
+            - -ec
+            - |
+              apk add --no-cache iptables >/dev/null
+              iptables -P OUTPUT DROP
+              iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+              iptables -A OUTPUT -d 127.0.0.0/8 -j ACCEPT
+          securityContext:
+            privileged: false
+            runAsUser: 0
+            runAsGroup: 0
+            readOnlyRootFilesystem: false
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]
+              add: ["NET_ADMIN"]
+      containers:
+        - name: agf-server
+          image: registry.neurocluster.dev/agf-server:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              name: http
+          securityContext:
+            privileged: false
+            runAsNonRoot: true
+            runAsUser: 65532
+            runAsGroup: 65532
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]
+          envFrom:
+            - configMapRef:
+                name: agf-signing-config
+          env:
+            - name: AGF_SIGNING_KEY_HEX
+              valueFrom:
+                secretKeyRef:
+                  name: agf-signing-key
+                  key: AGF_SIGNING_KEY_HEX
+            - name: AGF_TEE_MODE
+              value: "mock"
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "2000m"
+              memory: "1Gi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: agf-evaluator
+  namespace: agf-gpu
+  labels:
+    app: agf-evaluator
+    agf.neurocluster.io/profile: gpu-truth
+spec:
+  selector:
+    app: agf-evaluator
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
+  type: ClusterIP

@@ -1,0 +1,17 @@
+# AGF GPU-scoped namespace for hard runtime validation on gpunode.
+#
+# Why a separate namespace:
+# - the existing `agf` namespace is locked to PodSecurity `restricted`
+# - the gpu truth profile uses a NET_ADMIN init container to fail closed on egress
+# - this profile is intentionally narrow and should not be described as TEE-backed
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: agf-gpu
+  labels:
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/enforce-version: v1.30
+    pod-security.kubernetes.io/warn: privileged
+    pod-security.kubernetes.io/audit: privileged
+    app.kubernetes.io/part-of: agf
+    agf.neurocluster.io/profile: gpu-truth

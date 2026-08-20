@@ -1,0 +1,13 @@
+{
+  "name": "agf-enterprise",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node ./scripts/build.mjs",
+    "check": "node --check ./src/control-plane-plugin.mjs"
+  },
+  "dependencies": {
+    "agf-control-plane-public": "file:__PUBLIC_REPO_PATH__/control-plane"
+  }
+}

@@ -1,0 +1,18 @@
+warning: agf-script@0.1.0: rustc +succinct --version: "rustc 1.93.0-dev\n"
+warning: agf-script@0.1.0: agf-program built at 2026-03-06 23:48:34
+    Finished `release` profile [optimized] target(s) in 0.68s
+     Running `target/release/benchmark --prove`
+╔═══════════════════════════════════════════════════════════════╗
+║         AGF Feasibility Benchmark — SP1 zkVM                 ║
+║   Reference: OpenSpec v1.0 §8.2 — Tests A & B               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+  Rules to evaluate: 10
+  Mode: PROVE
+
+[2m2026-03-06T23:16:46.235911Z[0m [32m INFO[0m initializing cpu prover
+  Prover client initialized in 14.202061917s
+
+─── Generating ZK Proof ─────────────────────────────────────
+  Setup complete in 1.251790458s
+[2m2026-03-06T23:17:01.689153Z[0m [32m INFO[0m starting proof generation [3mmode[0m[2m=[0mCore

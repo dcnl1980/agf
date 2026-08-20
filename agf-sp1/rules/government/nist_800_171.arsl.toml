@@ -1,0 +1,68 @@
+# File: rules/government/nist_800_171.arsl.toml
+# AGF Rule Specification Language (ARSL) v0.1.0
+# NIST SP 800-171 - Protecting Controlled Unclassified Information
+
+[metadata]
+schema_version = "0.1.0"
+jurisdiction = "US"
+regulator = "DoD / NIST"
+regulation = "NIST SP 800-171 Rev. 3"
+regulation_ref = "DFARS 252.204-7012"
+effective_date = "2024-05-14"
+last_updated = "2026-04-01"
+author = "AGF Compliance Team"
+review_status = "draft"
+
+[metadata.source]
+title = "Protecting Controlled Unclassified Information in Nonfederal Systems"
+url = "https://csrc.nist.gov/pubs/sp/800/171/r3/final"
+section = "3.1 Access Control"
+
+# ─── Rule 1: CUI Access Authorization Gate ───────────────────────────────────
+
+[[rule]]
+id = "NIST-AC-001"
+name = "CUI System Access Gate"
+description = "Limit system access to authorized users, processes acting on behalf of authorized users, and devices (including other systems)."
+category = "access_control"
+severity = "critical"
+entity_type = "defense_contractor"
+
+[rule.source]
+regulation = "NIST SP 800-171"
+article = "3.1.1 Access Control"
+text = "Limit system access to authorized users, processes acting on behalf of authorized users, and devices (including other systems)."
+
+[rule.condition]
+type = "boolean_true"
+field = "cui_clearance_verified"
+unit = "boolean_flag"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 2: Session Lock Timeout ───────────────────────────────────────────
+
+[[rule]]
+id = "NIST-AC-002"
+name = "Session Lock Timeout Limit"
+description = "Information systems must initiate a session lock after a defined period of inactivity."
+category = "access_control"
+severity = "high"
+entity_type = "defense_contractor"
+
+[rule.source]
+regulation = "NIST SP 800-171"
+article = "3.1.10 Session Lock"
+text = "Use session lock with pattern-hiding displays to prevent access and viewing of data after a period of inactivity or upon receiving a request from a user."
+
+[rule.condition]
+type = "maximum"
+field = "session_inactivity_minutes"
+threshold = 15
+unit = "minutes"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"

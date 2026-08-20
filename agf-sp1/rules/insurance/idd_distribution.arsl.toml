@@ -1,0 +1,67 @@
+# File: rules/insurance/idd_distribution.arsl.toml
+# AGF Rule Specification Language (ARSL) v0.1.0
+# Insurance Distribution Directive (IDD) - Product Governance & Sales
+
+[metadata]
+schema_version = "0.1.0"
+jurisdiction = "EU"
+regulator = "EIOPA / National Competent Authorities"
+regulation = "IDD"
+regulation_ref = "Directive (EU) 2016/97"
+effective_date = "2018-10-01"
+last_updated = "2026-04-01"
+author = "AGF Compliance Team"
+review_status = "draft"
+
+[metadata.source]
+title = "Insurance Distribution Directive"
+url = "https://www.eiopa.europa.eu/browse/regulation-and-policy/insurance-distribution_en"
+section = "Article 25 - Product Oversight and Governance"
+
+# ─── Rule 1: Target Market Alignment gate ────────────────────────────────────
+
+[[rule]]
+id = "IDD-POG-001"
+name = "Product Target Market Alignment"
+description = "An insurance product must only be distributed to customers who fall within the identified target market based on their demands, needs, and risk profile."
+category = "product_governance"
+severity = "high"
+entity_type = "insurance_distributor"
+
+[rule.source]
+regulation = "IDD"
+article = "Article 25(1)"
+text = "The product approval process shall specify an identified target market for each product and ensure that the intended distribution strategy is consistent with the identified target market."
+
+[rule.condition]
+type = "boolean_true"
+field = "target_market_aligned"
+unit = "boolean_flag"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 2: Demands and Needs Test ──────────────────────────────────────────
+
+[[rule]]
+id = "IDD-DNT-001"
+name = "Demands and Needs Verification"
+description = "Prior to the conclusion of a contract, the distributor shall specify the demands and needs of the customer. The proposed contract shall be consistent with them."
+category = "sales_process"
+severity = "critical"
+entity_type = "insurance_distributor"
+
+[rule.source]
+regulation = "IDD"
+article = "Article 20(1)"
+text = "Prior to the conclusion of a contract, the insurance distributor shall specify, on the basis of information obtained from the customer, the demands and the needs of that customer."
+
+[rule.condition]
+type = "boolean_true"
+field = "demands_and_needs_verified"
+unit = "boolean_flag"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"

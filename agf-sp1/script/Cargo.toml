@@ -1,0 +1,33 @@
+[package]
+version = "0.1.0"
+name = "agf-script"
+edition = "2021"
+default-run = "benchmark"
+
+[[bin]]
+name = "benchmark"
+path = "src/bin/benchmark.rs"
+
+[[bin]]
+name = "arsl-compile"
+path = "src/bin/arsl_compile.rs"
+
+[[bin]]
+name = "arsl-validate"
+path = "src/bin/arsl_validate.rs"
+
+[dependencies]
+sp1-sdk = { version = "6.0.1", features = ["blocking", "native-gnark"] }
+serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
+serde = { version = "1.0", default-features = false, features = ["derive"] }
+clap = { version = "4.0", features = ["derive", "env"] }
+tracing = "0.1.40"
+agf-lib = { path = "../lib" }
+dotenv = "0.15.0"
+
+[build-dependencies]
+sp1-build = { version = "6.0.1" }
+
+[[bin]]
+name = "conformance"
+path = "src/bin/conformance.rs"

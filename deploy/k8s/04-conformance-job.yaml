@@ -1,0 +1,68 @@
+# AGF Conformance Job — runs all 19 test cases inside the cluster
+# This job proves that the ARSL rule engine produces correct decisions
+# when running inside a kata-isolated pod on the actual cluster hardware.
+#
+# Usage:
+#   kubectl apply -f deploy/k8s/04-conformance-job.yaml
+#   kubectl wait --for=condition=complete job/agf-conformance -n agf --timeout=300s
+#   kubectl logs -n agf -l job-name=agf-conformance
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: agf-conformance
+  namespace: agf
+  labels:
+    app.kubernetes.io/part-of: agf
+    agf.neurocluster.io/purpose: conformance-test
+spec:
+  ttlSecondsAfterFinished: 600   # auto-clean after 10 minutes
+  backoffLimit: 0                # no retries — conformance is deterministic
+  template:
+    metadata:
+      labels:
+        app: agf-conformance
+    spec:
+      restartPolicy: Never
+      # ── Same runtime as the evaluator ─────────────────────────────────
+      runtimeClassName: kata-qemu
+      nodeSelector:
+        katacontainers.io/kata-runtime: "true"
+      automountServiceAccountToken: false
+
+      containers:
+        - name: conformance
+          image: registry.neurocluster.dev/agf-server:latest
+          # Override entrypoint to run the conformance binary instead
+          command: ["/app/agf-conformance"]
+
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            runAsGroup: 65532
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]
+
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "4000m"
+              memory: "2Gi"
+
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+
+      volumes:
+        - name: tmp
+          emptyDir: {}
+---
+# Verify deployment: check the runtime is actually kata
+# kubectl exec -n agf deploy/agf-evaluator -- uname -r
+# Expected output: 5.15.0 (or similar) BUT with kata-specific kernel suffix
+# The kata VM presents its own kernel, distinct from the host kernel.

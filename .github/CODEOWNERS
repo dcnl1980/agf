@@ -1,0 +1,7 @@
+# Community catalog: set automatic review for PRs that touch the canonical index.
+# Replace the @team line below with your GitHub org team or usernames, then uncomment.
+# Example:  /catalog/** @acme-corp/governance
+#
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# /catalog/** @YOUR_ORG/agf-reviewers

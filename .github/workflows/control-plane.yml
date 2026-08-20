@@ -1,0 +1,37 @@
+name: control-plane
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "control-plane/**"
+      - ".github/workflows/control-plane.yml"
+  pull_request:
+    paths:
+      - "control-plane/**"
+      - ".github/workflows/control-plane.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: control-plane
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: control-plane/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Test
+        run: npm test
+        env:
+          NODE_ENV: test

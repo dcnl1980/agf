@@ -1,0 +1,142 @@
+# AGF Evaluator — ConfigMap for ARSL rule files
+# In production these would be baked into the image (immutable).
+# Here we mount them as a ConfigMap to allow easier updates during development.
+# The container's view of the FS is still read-only — it cannot modify these files.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agf-signing-config
+  namespace: agf
+data:
+  # Note: AGF_SIGNING_KEY_HEX should come from a Secret, not this ConfigMap.
+  # This ConfigMap holds non-secret configuration.
+  RUST_LOG: "agf_server=info,tower_http=warn"
+# AGF Evaluator Deployment — current live profile (kata-qemu)
+# This pod runs inside a lightweight VM (QEMU + Kata) rather than
+# a regular container namespace.
+#
+# Important:
+# - This profile validates Kata VM isolation only.
+# - It does NOT by itself prove confidential-computing guest protection.
+# - For SNP/TDX truth, use a dedicated confidential runtime profile and
+#   validate it with deploy/k8s/verify-production-truth.sh before changing
+#   website or product claims.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agf-evaluator
+  namespace: agf
+  labels:
+    app: agf-evaluator
+    app.kubernetes.io/part-of: agf
+    agf.neurocluster.io/layer: "2-kata"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agf-evaluator
+  template:
+    metadata:
+      labels:
+        app: agf-evaluator
+        agf.neurocluster.io/sandbox: "kata-qemu"
+    spec:
+      # ── Layer 2: Kata Containers runtime ─────────────────────────────────
+      # kata-qemu runs the pod inside a QEMU micro-VM (VM-level isolation).
+      # Works on both AMD and Intel nodes.
+      # Upgrade path: use kata-qemu-snp on AMD EPYC with SEV-SNP,
+      # or kata-qemu-tdx on Intel Xeon with TDX after runtime validation.
+      runtimeClassName: kata-qemu
+
+      # ── Node selection: only kata-capable nodes ────────────────────────
+      nodeSelector:
+        katacontainers.io/kata-runtime: "true"
+
+      # ── No service account token auto-mount ───────────────────────────
+      automountServiceAccountToken: false
+
+      containers:
+        - name: agf-server
+          # Pin to a specific digest for immutability.
+          # After building: docker inspect agf-server:latest --format='{{.Id}}'
+          image: registry.neurocluster.dev/agf-server:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              name: http
+
+          # ── Layer 1: Pod-level security ────────────────────────────────
+          securityContext:
+            privileged: false
+            runAsNonRoot: true
+            runAsUser: 65532
+            runAsGroup: 65532
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]
+
+          # ── Environment from ConfigMap + Secret ────────────────────────
+          envFrom:
+            - configMapRef:
+                name: agf-signing-config
+          env:
+            - name: AGF_SIGNING_KEY_HEX
+              valueFrom:
+                secretKeyRef:
+                  name: agf-signing-key
+                  key: AGF_SIGNING_KEY_HEX
+            - name: AGF_TEE_MODE
+              value: "mock"
+
+          # ── Resource bounds ────────────────────────────────────────────
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "2000m"
+              memory: "1Gi"
+
+          # ── Liveness + Readiness ───────────────────────────────────────
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          # ── Writeable tmp volume for any ephemeral writes ──────────────
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+
+      volumes:
+        - name: tmp
+          emptyDir: {}
+---
+# ClusterIP service for internal access
+apiVersion: v1
+kind: Service
+metadata:
+  name: agf-evaluator
+  namespace: agf
+  labels:
+    app: agf-evaluator
+spec:
+  selector:
+    app: agf-evaluator
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
+  type: ClusterIP

@@ -1,0 +1,68 @@
+# File: rules/healthcare/hipaa_privacy.arsl.toml
+# AGF Rule Specification Language (ARSL) v0.1.0
+# HIPAA Privacy Rule - PHI Access and Minimum Necessary Standard
+
+[metadata]
+schema_version = "0.1.0"
+jurisdiction = "US"
+regulator = "HHS OCR"
+regulation = "HIPAA Privacy Rule"
+regulation_ref = "45 CFR Part 160 and Subparts A and E of Part 164"
+effective_date = "2003-04-14"
+last_updated = "2026-04-01"
+author = "AGF Compliance Team"
+review_status = "draft"
+
+[metadata.source]
+title = "Health Insurance Portability and Accountability Act of 1996"
+url = "https://www.hhs.gov/hipaa"
+section = "Privacy Rule"
+
+# ─── Rule 1: PHI Access Authorization ───────────────────────────────────────
+
+[[rule]]
+id = "HIPAA-PRI-001"
+name = "PHI Access Authorization Gate"
+description = "Verifies that an entity or agent has authorized access or patient consent before accessing Protected Health Information (PHI)."
+category = "phi_access"
+severity = "critical"
+entity_type = "healthcare_provider"
+
+[rule.source]
+regulation = "HIPAA Privacy Rule"
+article = "45 CFR 164.502(a)"
+text = "A covered entity or business associate may not use or disclose protected health information, except as permitted or required."
+
+[rule.condition]
+type = "boolean_true"
+field = "phi_access_authorized"
+unit = "boolean"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 2: Minimum Necessary Standard ──────────────────────────────────────
+
+[[rule]]
+id = "HIPAA-MIN-001"
+name = "Minimum Necessary Standard"
+description = "When using or disclosing PHI, the covered entity must make reasonable efforts to limit PHI to the minimum necessary to accomplish the intended purpose."
+category = "data_minimization"
+severity = "high"
+entity_type = "healthcare_provider"
+
+[rule.source]
+regulation = "HIPAA Privacy Rule"
+article = "45 CFR 164.502(b)"
+text = "Minimum necessary requirement. When using or disclosing protected health information or when requesting protected health information from another covered entity or business associate..."
+
+[rule.condition]
+type = "equals"
+field = "minimum_necessary_flag"
+threshold = 1
+unit = "boolean_flag"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"

@@ -1,0 +1,32 @@
+warning: agf-script@0.1.0: rustc +succinct --version: "rustc 1.93.0-dev\n"
+warning: agf-script@0.1.0: agf-program built at 2026-03-06 23:48:34
+    Finished `release` profile [optimized] target(s) in 0.72s
+     Running `target/release/benchmark --prove`
+╔═══════════════════════════════════════════════════════════════╗
+║         AGF Feasibility Benchmark — SP1 zkVM                 ║
+║   Reference: OpenSpec v1.0 §8.2 — Tests A & B               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+  Rules to evaluate: 10
+  Mode: PROVE
+
+[2m2026-03-06T23:17:18.571723Z[0m [32m INFO[0m initializing cpu prover
+  Prover client initialized in 15.189797333s
+
+─── Generating ZK Proof ─────────────────────────────────────
+  Setup complete in 1.179331458s
+[2m2026-03-06T23:17:34.940172Z[0m [32m INFO[0m starting proof generation [3mmode[0m[2m=[0mCore
+[2m2026-03-06T23:17:50.229219Z[0m [32m INFO[0m [1mprove[0m: close [3mtime.busy[0m[2m=[0m204µs [3mtime.idle[0m[2m=[0m15.3s [2m[3mmode[0m[2m=[0mCore[0m
+  ✅ Proof generated in 15.289527667s
+  Proof size: 7432674 bytes
+  ✅ Proof verified in 76.955458ms
+
+  ┌─────────────────────────────────────────────────────────┐
+  │                    PROVING BENCHMARK                    │
+  │           (OpenSpec §8.2 — Test A)                      │
+  ├─────────────────────────────────────────────────────────┤
+  │  Setup Time:        1.179331458s                        │
+  │  Proving Time:      15.289527667s                       │
+  │  Verification Time: 76.955458ms                         │
+  │  Rules Evaluated:   10                                  │
+  └─────────────────────────────────────────────────────────┘

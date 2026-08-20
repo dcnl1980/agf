@@ -1,0 +1,37 @@
+name: marketplace-catalog
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "catalog/**"
+      - "agf-sp1/rules/**"
+      - "scripts/validate-marketplace-catalog.mjs"
+      - ".github/workflows/marketplace-catalog.yml"
+  pull_request:
+    paths:
+      - "catalog/**"
+      - "agf-sp1/rules/**"
+      - "scripts/validate-marketplace-catalog.mjs"
+      - ".github/workflows/marketplace-catalog.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Validate JSON schema
+        run: npx --yes ajv-cli validate -s catalog/community-catalog.schema.json -d catalog/community-catalog.json
+
+      - name: Validate catalog rule file references and ARSL syntax
+        run: node scripts/validate-marketplace-catalog.mjs

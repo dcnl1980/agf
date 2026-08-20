@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AGF community ruleset catalog (v1)",
+  "type": "object",
+  "required": ["catalogVersion", "entries"],
+  "properties": {
+    "catalogVersion": { "type": "string", "const": "1" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "entries": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "required": ["id", "summary", "maintainer", "license", "versions"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Stable id; use as publicBundleId when publishing to a tenant"
+        },
+        "summary": { "type": "string" },
+        "maintainer": { "type": "string" },
+        "license": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "jurisdiction": { "type": "array", "items": { "type": "string" } },
+        "versions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/version" }
+        }
+      }
+    },
+    "version": {
+      "type": "object",
+      "required": ["version", "digest", "ruleFiles", "sourceUrl", "publishedAt"],
+      "properties": {
+        "version": { "type": "string" },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "ruleFiles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^rules/.+\\.arsl\\.toml$"
+          },
+          "description": "Paths relative to agf-sp1 root, same as control-plane publish"
+        },
+        "sourceUrl": { "type": "string", "format": "uri" },
+        "publishedAt": { "type": "string", "format": "date-time" },
+        "note": { "type": "string" }
+      }
+    }
+  }
+}

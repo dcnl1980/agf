@@ -1,0 +1,43 @@
+# File: rules/government/iso27001_isms.arsl.toml
+# AGF Rule Specification Language (ARSL) v0.1.0
+# ISO/IEC 27001:2022 - Information Security Management Systems
+
+[metadata]
+schema_version = "0.1.0"
+jurisdiction = "Global"
+regulator = "ISO"
+regulation = "ISO/IEC 27001:2022"
+regulation_ref = "ISO/IEC 27001:2022(E)"
+effective_date = "2022-10-25"
+last_updated = "2026-04-01"
+author = "AGF Compliance Team"
+review_status = "draft"
+
+[metadata.source]
+title = "Information security, cybersecurity and privacy protection — Information security management systems — Requirements"
+url = "https://www.iso.org/standard/27001"
+section = "Annex A - Access Control"
+
+# ─── Rule 1: Access Control Check ──────────────────────────────────────────
+
+[[rule]]
+id = "ISO27001-A9-001"
+name = "Access Control Policy Gate"
+description = "Access to information and application system functions shall be restricted in accordance with the access control policy."
+category = "access_control"
+severity = "critical"
+entity_type = "information_system"
+
+[rule.source]
+regulation = "ISO/IEC 27001"
+article = "Annex A.9.1.1 (or A.5.15 in 2022)"
+text = "Rules for access control to information and other associated assets shall be established, documented and reviewed based on business and information security requirements."
+
+[rule.condition]
+type = "boolean_true"
+field = "access_control_authorization"
+unit = "boolean"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"

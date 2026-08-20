@@ -1,0 +1,93 @@
+# AGF runtime smoke job — gpu-node truth profile
+#
+# This job validates that the live evaluator running on `gpunode` is reachable
+# inside the cluster and returns a healthy status from the same Kata runtime
+# class. It intentionally stays within tooling already present in approved
+# base images.
+#
+# Full API conformance still requires either:
+# - shipping a dedicated conformance client/binary in the image, or
+# - adding a richer approved HTTP client image for structured POST assertions.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: agf-conformance
+  namespace: agf-gpu
+  labels:
+    app.kubernetes.io/part-of: agf
+    agf.neurocluster.io/purpose: runtime-smoke
+    agf.neurocluster.io/profile: gpu-truth
+spec:
+  ttlSecondsAfterFinished: 600
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app: agf-conformance
+        agf.neurocluster.io/profile: gpu-truth
+    spec:
+      restartPolicy: Never
+      runtimeClassName: kata-qemu
+      nodeSelector:
+        katacontainers.io/kata-runtime: "true"
+        kubernetes.io/hostname: gpunode
+      automountServiceAccountToken: false
+      initContainers:
+        - name: lockdown-egress
+          image: docker.io/library/alpine:3.20
+          command:
+            - sh
+            - -ec
+            - |
+              apk add --no-cache iptables >/dev/null
+              iptables -P OUTPUT DROP
+              iptables -A OUTPUT -d 10.0.0.0/8 -j ACCEPT
+              iptables -A OUTPUT -d 127.0.0.0/8 -j ACCEPT
+              iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+          securityContext:
+            privileged: false
+            runAsNonRoot: false
+            runAsUser: 0
+            runAsGroup: 0
+            readOnlyRootFilesystem: false
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]
+              add: ["NET_ADMIN"]
+      containers:
+        - name: conformance
+          image: docker.io/library/busybox:1.36
+          command:
+            - sh
+            - -ec
+            - |
+              wget -qO- http://agf-evaluator/health > /tmp/response.json
+              cat /tmp/response.json
+              grep -q '"status":"ok"' /tmp/response.json
+              grep -q '"version":"0.1.0"' /tmp/response.json
+          securityContext:
+            privileged: false
+            runAsNonRoot: true
+            runAsUser: 65532
+            runAsGroup: 65532
+            readOnlyRootFilesystem: false
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

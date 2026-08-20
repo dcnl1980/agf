@@ -1,0 +1,32 @@
+# AGF Namespace with PodSecurity restricted profile
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: agf
+  labels:
+    # Enforce Kubernetes built-in PodSecurity restricted standard
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: v1.30
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+    app.kubernetes.io/part-of: agf
+---
+# Kyverno exception: allow agf namespace to use kata runtime
+# (kata requires host-level permissions that the restricted profile
+# would normally block — this is safe because kata adds a VM boundary)
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: agf-kata-exception
+  namespace: kyverno
+spec:
+  exceptions:
+    - policyName: disallow-privileged-containers
+      ruleNames: ["deny-privileged"]
+    - policyName: restrict-seccomp
+      ruleNames: ["check-seccomp"]
+  match:
+    any:
+      - resources:
+          namespaces: ["agf"]
+          kinds: ["Pod"]

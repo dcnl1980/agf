@@ -1,0 +1,69 @@
+# File: rules/finance/mifid2.arsl.toml
+# AGF Rule Specification Language (ARSL) v0.1.0
+# MiFID II - Algorithmic Trading and Order-to-Trade Ratio (OTR)
+
+[metadata]
+schema_version = "0.1.0"
+jurisdiction = "EU"
+regulator = "ESMA"
+regulation = "MiFID II"
+regulation_ref = "Directive 2014/65/EU"
+effective_date = "2018-01-03"
+last_updated = "2026-04-01"
+author = "AGF Compliance Team"
+review_status = "draft"
+
+[metadata.source]
+title = "Markets in Financial Instruments Directive II"
+url = "https://www.esma.europa.eu/rulebook/mifid-ii"
+section = "Article 17 & RTS 9"
+
+# ─── Rule 1: Order-to-Trade Ratio (OTR) Limit ─────────────────────────────────
+
+[[rule]]
+id = "MIFID2-OTR-001"
+name = "Maximum Order-to-Trade Ratio (Algorithmic Trading)"
+description = "Investment firms engaging in algorithmic trading must not exceed the maximum permitted ratio of unexecuted orders to transactions."
+category = "market_abuse"
+severity = "high"
+entity_type = "investment_firm"
+
+[rule.source]
+regulation = "MiFID II RTS 9"
+article = "Article 2"
+text = "Trading venues shall calculate the ratio of unexecuted orders to transactions effectively entered into the system by each of their members or participants."
+
+[rule.condition]
+type = "maximum"
+field = "order_to_trade_ratio"
+threshold = 100
+unit = "ratio"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 2: Circuit Breaker / Price Band Gate ────────────────────────────────
+
+[[rule]]
+id = "MIFID2-CB-001"
+name = "Circuit Breaker Price Band Check"
+description = "Algorithmic orders must not execute if the asset price deviation exceeds the mandated circuit breaker percentage."
+category = "market_stability"
+severity = "critical"
+entity_type = "trading_venue"
+
+[rule.source]
+regulation = "MiFID II"
+article = "Article 48(5)"
+text = "Member States shall require a regulated market to be able to temporarily halt or constrain trading if there is a significant price movement in a financial instrument."
+
+[rule.condition]
+type = "maximum"
+field = "price_deviation_percentage"
+threshold = 5
+unit = "percentage"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"

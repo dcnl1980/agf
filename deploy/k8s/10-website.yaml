@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agf-website
+  namespace: dmz
+  labels:
+    app: agf-website
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agf-website
+  template:
+    metadata:
+      labels:
+        app: agf-website
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: agf-website
+          image: registry.neurocluster.dev/agf-website:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          securityContext:
+            privileged: false
+            runAsNonRoot: true
+            runAsUser: 101
+            readOnlyRootFilesystem: false
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: agf-website
+  namespace: dmz
+spec:
+  selector:
+    app: agf-website
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: agf-website-ingress
+  namespace: dmz
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: "nginx"
+  tls:
+  - hosts:
+    - agf.2srv.io
+    secretName: agf-website-tls
+  rules:
+  - host: agf.2srv.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: agf-website
+            port:
+              number: 80

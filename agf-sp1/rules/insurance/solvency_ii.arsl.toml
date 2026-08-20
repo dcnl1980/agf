@@ -1,0 +1,69 @@
+# File: rules/insurance/solvency_ii.arsl.toml
+# AGF Rule Specification Language (ARSL) v0.1.0
+# Solvency II - Capital Adequacy and Risk Management
+
+[metadata]
+schema_version = "0.1.0"
+jurisdiction = "EU"
+regulator = "EIOPA"
+regulation = "Solvency II"
+regulation_ref = "Directive 2009/138/EC"
+effective_date = "2016-01-01"
+last_updated = "2026-04-01"
+author = "AGF Compliance Team"
+review_status = "draft"
+
+[metadata.source]
+title = "Taking-up and pursuit of the business of Insurance and Reinsurance"
+url = "https://www.eiopa.europa.eu/browse/regulation-and-policy/solvency-ii_en"
+section = "Article 100 - Solvency Capital Requirement"
+
+# ─── Rule 1: Solvency Capital Requirement (SCR) Ratio ──────────────────────────
+
+[[rule]]
+id = "SOLVII-SCR-001"
+name = "Minimum Solvency Capital Ratio"
+description = "Insurance and reinsurance undertakings must hold eligible own funds covering the Solvency Capital Requirement (SCR) at all times."
+category = "capital_adequacy"
+severity = "critical"
+entity_type = "insurance_undertaking"
+
+[rule.source]
+regulation = "Solvency II"
+article = "Article 100"
+text = "Member States shall require that insurance and reinsurance undertakings hold eligible own funds covering the Solvency Capital Requirement."
+
+[rule.condition]
+type = "minimum"
+field = "scr_ratio_percentage"
+threshold = 100
+unit = "percentage"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 2: Minimum Capital Requirement (MCR) ────────────────────────────────
+
+[[rule]]
+id = "SOLVII-MCR-001"
+name = "Minimum Capital Requirement Baseline"
+description = "Absolute floor for capital. If MCR falls below 100%, supervisory authorities intervene and authorization may be withdrawn."
+category = "capital_adequacy"
+severity = "critical"
+entity_type = "insurance_undertaking"
+
+[rule.source]
+regulation = "Solvency II"
+article = "Article 128"
+text = "Member States shall require that insurance and reinsurance undertakings hold eligible basic own funds, to cover the Minimum Capital Requirement."
+
+[rule.condition]
+type = "minimum"
+field = "mcr_ratio_percentage"
+threshold = 100
+unit = "percentage"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"

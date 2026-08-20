@@ -1,0 +1,26 @@
+# Pandoc defaults: Unicode-friendly PDF for WHITEPAPER.md (XeLaTeX + fontspec).
+# Build from repo root:
+#   pandoc docs/WHITEPAPER.md -d docs/pandoc/whitepaper-pdf.yaml -o website/public/agf-whitepaper-v1.pdf
+# Or: ./docs/pandoc/build-whitepaper-pdf.sh
+
+from: markdown
+to: pdf
+standalone: true
+pdf-engine: xelatex
+# Body: Noto Sans (broad Unicode). Code / verbatim: Ubuntu Mono (good box-drawing coverage).
+# If Ubuntu Mono is missing, try: monofont: Menlo  OR  monofont: Roboto Mono
+variables:
+  documentclass: article
+  papersize: a4
+  fontsize: 11pt
+  mainfont: Noto Sans
+  sansfont: Noto Sans
+  monofont: Ubuntu Mono
+  geometry: margin=2.5cm
+  colorlinks: true
+  linkcolor: blue
+  urlcolor: blue
+  toc: false
+
+include-in-header:
+  - latex-header.tex

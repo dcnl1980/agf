@@ -1,0 +1,225 @@
+{
+  "audit": {
+    "chain_hash": "blake3:6f1a77d50a43e3595cf316b274428cb247db649b60a2159162b9e8a17b344f18",
+    "log_id": 1,
+    "proof_hash": "blake3:ebcb9e17d5b7dcf28460c7052a25ab7c8bfe86b52ab7b5a3cfe5781197d274ca",
+    "tee_attestation": {
+      "enclave_type": "mock",
+      "note": "This is a mock attestation stub for the AGF MVP. Production deployment requires AWS Nitro Enclave hardware. See AGF OpenSpec v2.0 §9.4 for the production integration path.",
+      "payload_hash": "blake3:003268c4fc22a119c2c9ddbb6bce95de9637e65237fb24a31e93766cc1779d3e",
+      "pcr0": "blake3:9c11a7f80dcf99ede4bae057f629bca0528048caa3d0695a056b743b46aa9d97",
+      "timestamp_utc": "2026-04-22T21:51:11.332805+00:00"
+    },
+    "timestamp_utc": "2026-04-22T21:51:11.332808+00:00"
+  },
+  "entity_id": 9001,
+  "entity_name": "Acme Financial Ltd",
+  "evaluation_ms": 0.005,
+  "overall_decision": "PASS",
+  "signature": "ed25519:05061cc6b1eacafc0522284e869d1fc7181a47cec385b185293d5d33056802db5cff5e17f00d9f21a34e9478040c23b7b6f9e57a96af301021f0e5a368c41c0c",
+  "total_block": 0,
+  "total_pass": 26,
+  "total_rules": 26,
+  "verticals": [
+    {
+      "block_count": 0,
+      "decision": "PASS",
+      "evaluation_ms": 0.002,
+      "pass_count": 6,
+      "rule_file": "rules/finance/kyc/standard_onboarding.arsl.toml",
+      "rules": [
+        {
+          "actual_value": 34,
+          "compliant": true,
+          "margin_bps": 8888,
+          "rule_id": 1
+        },
+        {
+          "actual_value": 12,
+          "compliant": true,
+          "margin_bps": 5000,
+          "rule_id": 2
+        },
+        {
+          "actual_value": 1,
+          "compliant": true,
+          "margin_bps": 0,
+          "rule_id": 3
+        },
+        {
+          "actual_value": 826,
+          "compliant": true,
+          "margin_bps": 0,
+          "rule_id": 4
+        },
+        {
+          "actual_value": 0,
+          "compliant": true,
+          "margin_bps": 0,
+          "rule_id": 5
+        },
+        {
+          "actual_value": 98765,
+          "compliant": true,
+          "margin_bps": 0,
+          "rule_id": 6
+        }
+      ],
+      "total_rules": 6,
+      "vertical": "KYC Standard Onboarding"
+    },
+    {
+      "block_count": 0,
+      "decision": "PASS",
+      "evaluation_ms": 0.001,
+      "pass_count": 5,
+      "rule_file": "rules/finance/sanctions/hmt.arsl.toml",
+      "rules": [
+        {
+          "actual_value": 99,
+          "compliant": true,
+          "margin_bps": 0,
+          "rule_id": 1
+        },
+        {
+          "actual_value": 99,
+          "compliant": true,
+          "margin_bps": 0,
+          "rule_id": 2
+        },
+        {
+          "actual_value": 42,
+          "compliant": true,
+          "margin_bps": 0,
+          "rule_id": 3
+        },
+        {
+          "actual_value": 12345,
+          "compliant": true,
+          "margin_bps": 0,
+          "rule_id": 4
+        },
+        {
+          "actual_value": 500000,
+          "compliant": true,
+          "margin_bps": 5000,
+          "rule_id": 5
+        }
+      ],
+      "total_rules": 5,
+      "vertical": "Financial Sanctions"
+    },
+    {
+      "block_count": 0,
+      "decision": "PASS",
+      "evaluation_ms": 0.001,
+      "pass_count": 10,
+      "rule_file": "rules/finance/fca/consumer_duty.arsl.toml",
+      "rules": [
+        {
+          "actual_value": 1200,
+          "compliant": true,
+          "margin_bps": 5000,
+          "rule_id": 1
+        },
+        {
+          "actual_value": 13500,
+          "compliant": true,
+          "margin_bps": 3500,
+          "rule_id": 2
+        },
+        {
+          "actual_value": 450,
+          "compliant": true,
+          "margin_bps": 5000,
+          "rule_id": 3
+        },
+        {
+          "actual_value": 11200,
+          "compliant": true,
+          "margin_bps": 1200,
+          "rule_id": 4
+        },
+        {
+          "actual_value": 1800,
+          "compliant": true,
+          "margin_bps": 18000000,
+          "rule_id": 5
+        },
+        {
+          "actual_value": 7200,
+          "compliant": true,
+          "margin_bps": 72000000,
+          "rule_id": 6
+        },
+        {
+          "actual_value": 22000,
+          "compliant": true,
+          "margin_bps": 4666,
+          "rule_id": 7
+        },
+        {
+          "actual_value": 950,
+          "compliant": true,
+          "margin_bps": 5833,
+          "rule_id": 8
+        },
+        {
+          "actual_value": 100,
+          "compliant": true,
+          "margin_bps": 1000000,
+          "rule_id": 9
+        },
+        {
+          "actual_value": 680,
+          "compliant": true,
+          "margin_bps": 2363,
+          "rule_id": 10
+        }
+      ],
+      "total_rules": 10,
+      "vertical": "Consumer Duty"
+    },
+    {
+      "block_count": 0,
+      "decision": "PASS",
+      "evaluation_ms": 0.001,
+      "pass_count": 5,
+      "rule_file": "rules/cross_industry/gdpr/consent.arsl.toml",
+      "rules": [
+        {
+          "actual_value": 1,
+          "compliant": true,
+          "margin_bps": 0,
+          "rule_id": 1
+        },
+        {
+          "actual_value": 1,
+          "compliant": true,
+          "margin_bps": 0,
+          "rule_id": 2
+        },
+        {
+          "actual_value": 0,
+          "compliant": true,
+          "margin_bps": 0,
+          "rule_id": 3
+        },
+        {
+          "actual_value": 180,
+          "compliant": true,
+          "margin_bps": 7534,
+          "rule_id": 4
+        },
+        {
+          "actual_value": 0,
+          "compliant": true,
+          "margin_bps": 0,
+          "rule_id": 5
+        }
+      ],
+      "total_rules": 5,
+      "vertical": "GDPR / EU AI Act"
+    }
+  ]
+}

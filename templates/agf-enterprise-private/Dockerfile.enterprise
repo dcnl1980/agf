@@ -1,0 +1,12 @@
+FROM node:22-alpine AS enterprise-builder
+WORKDIR /enterprise
+COPY package.json package-lock.json* ./
+RUN npm install
+COPY src ./src
+COPY scripts ./scripts
+RUN npm run build
+
+FROM agf-control-plane:dev
+WORKDIR /app
+COPY --from=enterprise-builder /enterprise/dist /app/enterprise-dist
+ENV AGF_ENTERPRISE_MODULE=/app/enterprise-dist/control-plane-plugin.mjs

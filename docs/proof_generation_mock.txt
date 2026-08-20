@@ -1,0 +1,26 @@
+warning: agf-script@0.1.0: rustc +succinct --version: "rustc 1.93.0-dev\n"
+warning: agf-script@0.1.0: agf-program built at 2026-03-06 23:48:34
+    Finished `release` profile [optimized] target(s) in 0.44s
+     Running `target/release/benchmark --prove`
+╔═══════════════════════════════════════════════════════════════╗
+║         AGF Feasibility Benchmark — SP1 zkVM                 ║
+║   Reference: OpenSpec v1.0 §8.2 — Tests A & B               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+  Rules to evaluate: 10
+  Mode: PROVE
+
+[2m2026-03-06T23:17:05.512074Z[0m [32m INFO[0m initializing mock prover
+  Prover client initialized in 360.222ms
+
+─── Generating ZK Proof ─────────────────────────────────────
+  Setup complete in 1.159023s
+[2m2026-03-06T23:17:07.030861Z[0m [32m INFO[0m generating mock proof [3mmode[0m[2m=[0mCore
+[2m2026-03-06T23:17:07.034713Z[0m [32m INFO[0m public_value_stream: [10, 0, 0, 0, 9, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 226, 4, 0, 0, 0, 0, 0, 0, 32, 3, 0, 0, 0, 0, 0, 0, 249, 21, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1, 236, 44, 0, 0, 0, 0, 0, 0, 16, 39, 0, 0, 0, 0, 0, 0, 220, 5, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 1, 194, 1, 0, 0, 0, 0, 0, 0, 44, 1, 0, 0, 0, 0, 0, 0, 136, 19, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 1, 48, 42, 0, 0, 0, 0, 0, 0, 16, 39, 0, 0, 0, 0, 0, 0, 32, 3, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 1, 8, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 168, 18, 1, 0, 0, 0, 0, 6, 0, 0, 0, 1, 16, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81, 37, 2, 0, 0, 0, 0, 7, 0, 0, 0, 1, 92, 68, 0, 0, 0, 0, 0, 0, 152, 58, 0, 0, 0, 0, 0, 0, 130, 6, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 1, 182, 3, 0, 0, 0, 0, 0, 0, 88, 2, 0, 0, 0, 0, 0, 0, 201, 22, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 1, 250, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 160, 37, 38, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 224, 1, 0, 0, 0, 0, 0, 0, 38, 2, 0, 0, 0, 0, 0, 0, 8, 251, 255, 255, 255, 255, 255, 255]
+[2m2026-03-06T23:17:07.035837Z[0m [32m INFO[0m [1mexecute_program[0m: close [3mtime.busy[0m[2m=[0m1.72ms [3mtime.idle[0m[2m=[0m3.20ms
+  ✅ Proof generated in 5.036209ms
+  Proof size: 776 bytes
+
+thread 'main' (394193) panicked at script/src/bin/benchmark.rs:197:14:
+failed to verify proof: Core(Empty core proof)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

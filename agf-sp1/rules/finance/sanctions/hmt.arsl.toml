@@ -1,0 +1,155 @@
+# File: rules/sanctions/hmt.arsl.toml
+# AGF Rule Specification Language (ARSL) v0.1.0
+# HM Treasury — UK Financial Sanctions
+# Reference: AGF OpenSpec v2.0 §5.3, Vertical: Sanctions Screening
+#
+# Hashing convention (for MVP / test purposes):
+#   Jurisdiction ISO codes are represented as simple numeric hashes.
+#   A production implementation would use Blake3(ISO_3166_code) truncated to u64.
+#   For testing: RU=18, KP=36, IR=72, BY=144, SY=288, VE=576, CU=1152
+
+[metadata]
+schema_version = "0.1.0"
+jurisdiction = "UK"
+regulator = "HMT"
+regulation = "Financial Sanctions"
+regulation_ref = "SAMLA 2018"
+effective_date = "2018-11-23"
+last_updated = "2026-03-22"
+author = "AGF Compliance Team"
+review_status = "draft"
+
+[metadata.source]
+title = "Sanctions and Anti-Money Laundering Act 2018 — UK Financial Sanctions"
+url = "https://www.legislation.gov.uk/ukpga/2018/13/contents"
+section = "Part 1 — Financial Sanctions"
+
+# ─── Rule 1: Counterparty Jurisdiction — HMT Consolidated Sanctions List ─────
+
+[[rule]]
+id = "HMT-SAN-001"
+name = "Counterparty Jurisdiction Sanctions Gate"
+description = "Counterparty's registered jurisdiction must not appear on the HMT Financial Sanctions list"
+category = "sanctions"
+severity = "critical"
+entity_type = "financial_institution"
+
+[rule.source]
+regulation = "SAMLA 2018"
+article = "Section 1"
+text = "Her Majesty's Treasury may make financial sanctions regulations"
+
+[rule.condition]
+type = "not_member_of"
+field = "counterparty_jurisdiction_hash"
+# Blocked: RU=18, KP=36, IR=72, BY=144, SY=288, VE=576, CU=1152
+blocked_values = [18, 36, 72, 144, 288, 576, 1152]
+unit = "jurisdiction_hash"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 2: Beneficial Owner Jurisdiction ──────────────────────────────────
+
+[[rule]]
+id = "HMT-SAN-002"
+name = "Beneficial Owner Jurisdiction Sanctions Gate"
+description = "Ultimate beneficial owner jurisdiction must not be on the HMT sanctions list"
+category = "sanctions"
+severity = "critical"
+entity_type = "financial_institution"
+
+[rule.source]
+regulation = "SAMLA 2018"
+article = "Section 6"
+text = "Regulations may prohibit specified persons from making funds or economic resources available"
+
+[rule.condition]
+type = "not_member_of"
+field = "ubo_jurisdiction_hash"
+blocked_values = [18, 36, 72, 144, 288, 576, 1152]
+unit = "jurisdiction_hash"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 3: Transaction Currency — Sanctioned Currency Denominations ────────
+
+[[rule]]
+id = "HMT-SAN-003"
+name = "Sanctioned Currency Denomination Gate"
+description = "Transaction must not be denominated in a currency that bypasses financial sanctions"
+category = "sanctions"
+severity = "high"
+entity_type = "financial_institution"
+
+[rule.source]
+regulation = "SAMLA 2018"
+article = "Section 3(2)"
+text = "Financial sanctions regulations may impose prohibitions relating to financial services"
+
+[rule.condition]
+type = "not_member_of"
+field = "currency_code_hash"
+# Blocked currencies: IRR (Iranian Rial)=97, KPW (North Korean Won)=193
+blocked_values = [97, 193]
+unit = "currency_hash"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 4: OFAC SDN Name-Match Gate ────────────────────────────────────────
+
+[[rule]]
+id = "OFAC-SDN-001"
+name = "OFAC SDN List Name-Match Gate"
+description = "Counterparty name hash must not appear on the OFAC Specially Designated Nationals list"
+category = "sanctions"
+severity = "critical"
+entity_type = "financial_institution"
+
+[rule.source]
+regulation = "IEEPA / TWEA"
+article = "Executive Order 13224"
+text = "Persons whose property and interests in property are blocked"
+
+[rule.condition]
+type = "not_member_of"
+field = "counterparty_name_hash"
+# In production: this list would be sourced from the OFAC SDN API and hashed
+# For testing: using representative placeholder hashes
+blocked_values = [0xDEAD1, 0xDEAD2, 0xDEAD3, 0xDEAD4, 0xDEAD5]
+unit = "name_hash_blake3"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 5: Transaction Amount — Reporting Threshold ────────────────────────
+
+[[rule]]
+id = "HMT-SAN-005"
+name = "Large Transaction Sanctions Reporting Threshold"
+description = "Transactions above GBP 10,000 to high-risk jurisdictions require enhanced due diligence"
+category = "sanctions"
+severity = "high"
+entity_type = "financial_institution"
+
+[rule.source]
+regulation = "Money Laundering Regulations 2017"
+article = "Regulation 33"
+text = "Enhanced customer due diligence: politically exposed persons and high-risk third countries"
+
+[rule.condition]
+type = "maximum"
+field = "transaction_amount_gbp"
+# GBP 10,000 threshold (in pence: 1,000,000)
+threshold = 1000000
+unit = "pence"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "escalate"

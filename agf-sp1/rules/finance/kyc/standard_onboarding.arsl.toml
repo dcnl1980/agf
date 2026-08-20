@@ -1,0 +1,176 @@
+# File: rules/kyc/standard_onboarding.arsl.toml
+# AGF Rule Specification Language (ARSL) v0.1.0
+# FCA SYSC 6.3 / MLR 2017 — Standard KYC Onboarding Eligibility
+# Reference: AGF OpenSpec v2.0 §5.6, Vertical: KYC Eligibility
+
+[metadata]
+schema_version = "0.1.0"
+jurisdiction = "UK"
+regulator = "FCA"
+regulation = "KYC Standard Onboarding"
+regulation_ref = "MLR 2017 / FCA SYSC 6.3 / PS22/9"
+effective_date = "2017-06-26"
+last_updated = "2026-03-22"
+author = "AGF Compliance Team"
+review_status = "draft"
+
+[metadata.source]
+title = "Money Laundering, Terrorist Financing and Transfer of Funds Regulations 2017"
+url = "https://www.legislation.gov.uk/uksi/2017/692/contents"
+section = "Part 2 — Customer Due Diligence"
+
+# ─── Rule 1: Minimum Age Gate ─────────────────────────────────────────────────
+
+[[rule]]
+id = "KYC-AGE-001"
+name = "Minimum Age Gate (18+)"
+description = "Applicant must be 18 years or older to onboard as an individual customer"
+category = "eligibility"
+severity = "critical"
+entity_type = "individual"
+
+[rule.source]
+regulation = "Financial Services and Markets Act 2000"
+article = "Section 26"
+text = "Agreements made by an authorised person in the course of carrying on a regulated activity are unenforceable against a minor"
+
+[rule.condition]
+type = "minimum"
+field = "customer_age_years"
+threshold = 18
+unit = "years"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 2: AML Risk Score Gate ──────────────────────────────────────────────
+
+[[rule]]
+id = "KYC-AML-001"
+name = "AML Risk Score Standard Onboarding Gate"
+description = "AML risk score must be within standard onboarding range (0-24); scores 25+ require enhanced due diligence"
+category = "aml"
+severity = "critical"
+entity_type = "individual"
+
+[rule.source]
+regulation = "MLR 2017"
+article = "Regulation 28(2)"
+text = "Firms must apply customer due diligence measures when establishing a business relationship"
+
+[rule.condition]
+type = "maximum"
+field = "aml_risk_score"
+threshold = 24
+unit = "score_0_100"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "escalate"
+
+# ─── Rule 3: ID Verification Status ──────────────────────────────────────────
+
+[[rule]]
+id = "KYC-IDV-001"
+name = "Government-Issued ID Verification"
+description = "Applicant must have passed government-issued photo ID verification"
+category = "identity"
+severity = "critical"
+entity_type = "individual"
+
+[rule.source]
+regulation = "MLR 2017"
+article = "Regulation 28(3)(a)"
+text = "Identify the customer and verify the customer's identity on the basis of documents, data or information obtained from a reliable and independent source"
+
+[rule.condition]
+type = "boolean_true"
+field = "id_verification_passed"
+unit = "boolean"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 4: Country of Birth — Non-Restricted Jurisdiction ──────────────────
+
+[[rule]]
+id = "KYC-JUR-001"
+name = "Country of Birth Non-Restricted Jurisdiction"
+description = "Applicant's country of birth must not be a restricted jurisdiction for standard onboarding"
+category = "jurisdiction"
+severity = "high"
+entity_type = "individual"
+
+[rule.source]
+regulation = "MLR 2017"
+article = "Regulation 33(1)(b)"
+text = "Enhanced customer due diligence applies to a business relationship with a person established in a high-risk third country"
+
+[rule.condition]
+type = "not_member_of"
+field = "country_of_birth_hash"
+# FATF high-risk jurisdictions (simplified hashes for MVP)
+# In production: hash of ISO 3166-1 alpha-2 code via Blake3
+# KP=36, IR=72, MM=101, SY=288, YE=512
+blocked_values = [36, 72, 101, 288, 512]
+unit = "country_hash"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "escalate"
+
+# ─── Rule 5: PEP Status — Standard Onboarding Gate ───────────────────────────
+
+[[rule]]
+id = "KYC-PEP-001"
+name = "Politically Exposed Person (PEP) Standard Onboarding Gate"
+description = "Applicants identified as PEPs must not be onboarded via standard process; require enhanced due diligence"
+category = "pep"
+severity = "high"
+entity_type = "individual"
+
+[rule.source]
+regulation = "MLR 2017"
+article = "Regulation 35(1)"
+text = "Where a relevant person establishes a business relationship with a PEP, they must apply enhanced customer due diligence measures"
+
+[rule.condition]
+# pep_status = 0 (not a PEP) → PASS (standard onboarding allowed)
+# pep_status = 1 (is a PEP) → BLOCK (route to EDD)
+type = "equals"
+field = "pep_status"
+threshold = 0
+unit = "boolean_flag"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "escalate"
+
+# ─── Rule 6: Sanctions List Name-Match ───────────────────────────────────────
+
+[[rule]]
+id = "KYC-SAN-001"
+name = "Applicant Name Sanctions List Gate"
+description = "Applicant name hash must not match any entry on the HMT or OFAC consolidated sanctions list"
+category = "sanctions"
+severity = "critical"
+entity_type = "individual"
+
+[rule.source]
+regulation = "SAMLA 2018"
+article = "Section 1"
+text = "Her Majesty's Treasury may make financial sanctions regulations"
+
+[rule.condition]
+type = "not_member_of"
+field = "applicant_name_hash"
+# Production: populated from HMT + OFAC SDN API, Blake3 hashed
+# Test placeholders:
+blocked_values = [11, 22, 33]
+unit = "name_hash_blake3"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"

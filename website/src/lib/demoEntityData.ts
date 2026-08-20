@@ -1,0 +1,31 @@
+/**
+ * Matches `agf-sp1/server/src/bin/agf_demo.rs` data map (u64 fields) for a passing multi-vertical run.
+ */
+export const DEMO_ACME_ENTITY_DATA: Record<string, number> = {
+  customer_age_years: 34,
+  aml_risk_score: 12,
+  id_verification_passed: 1,
+  country_of_birth_hash: 826,
+  pep_status: 0,
+  applicant_name_hash: 98765,
+  counterparty_jurisdiction_hash: 99,
+  ubo_jurisdiction_hash: 99,
+  currency_code_hash: 42,
+  counterparty_name_hash: 12345,
+  transaction_amount_gbp: 500_000,
+  capital_ratio: 1200,
+  liquidity_coverage: 13500,
+  leverage_ratio: 450,
+  net_stable_funding: 11200,
+  large_exposure: 1800,
+  ict_report_time: 7200,
+  solvency_ratio: 22000,
+  tier1_capital: 950,
+  countercyclical_buffer: 100,
+  stress_test_capital: 680,
+  gdpr_explicit_consent: 1,
+  special_category_consent: 1,
+  erasure_request_active: 0,
+  days_since_collection: 180,
+  ai_prohibited_category: 0,
+};

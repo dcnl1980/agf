@@ -1,0 +1,22 @@
+# Local env (secrets) — use .env.example as template
+.env
+
+# Dependencies and build artifacts
+node_modules/
+**/node_modules/
+website/dist/
+agf-sp1/target/
+control-plane/data/
+*.db
+*.db-*
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Logs / temp
+tmp/
+*.log
+npm-debug.log*

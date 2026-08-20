@@ -1,0 +1,40 @@
+services:
+  agf-server:
+    image: agf-server:dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agf-sandbox
+    ports:
+      - "3000:3000"
+    # ── Sandbox security constraints ──────────────────────────────────────────
+    read_only: true                    # Filesystem is read-only
+    security_opt:
+      - no-new-privileges:true         # Cannot escalate privileges
+      - seccomp:unconfined             # Replace with a custom profile in production
+    cap_drop:
+      - ALL                            # Drop all Linux capabilities
+    user: "65532:65532"                # nonroot (matches distroless)
+    # ── Rule files mount (read-only) ──────────────────────────────────────────
+    volumes:
+      - ./agf-sp1/rules:/app/rules:ro  # ARSL rule files, read-only
+    # ── Environment ──────────────────────────────────────────────────────────
+    environment:
+      - RUST_LOG=agf_server=info,tower_http=warn
+      # Set AGF_SIGNING_KEY_HEX in .env for a persistent keypair
+      # - AGF_SIGNING_KEY_HEX=<64-char-hex-seed>
+    # ── Health check ──────────────────────────────────────────────────────────
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    # ── No network egress ─────────────────────────────────────────────────────
+    networks:
+      - agf-internal
+
+networks:
+  agf-internal:
+    driver: bridge
+    internal: true    # No access to the external internet from this network

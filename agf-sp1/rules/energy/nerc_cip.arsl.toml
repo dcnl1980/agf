@@ -1,0 +1,67 @@
+# File: rules/energy/nerc_cip.arsl.toml
+# AGF Rule Specification Language (ARSL) v0.1.0
+# NERC CIP - Critical Infrastructure Protection
+
+[metadata]
+schema_version = "0.1.0"
+jurisdiction = "North America"
+regulator = "NERC / FERC"
+regulation = "NERC CIP"
+regulation_ref = "CIP-005-7"
+effective_date = "2024-01-01"
+last_updated = "2026-04-01"
+author = "AGF Compliance Team"
+review_status = "draft"
+
+[metadata.source]
+title = "Electronic Security Perimeter(s)"
+url = "https://www.nerc.com/pa/Stand/Reliability%20Standards/CIP-005-7.pdf"
+section = "Interactive Remote Access Management"
+
+# ─── Rule 1: Cyber System Remote Access MFA ─────────────────────────────────
+
+[[rule]]
+id = "NERC-CIP-005-1"
+name = "Interactive Remote Access MFA"
+description = "All interactive remote access into the Electronic Security Perimeter (ESP) containing critical cyber assets must require Multi-Factor Authentication."
+category = "cyber_security"
+severity = "critical"
+entity_type = "utility_operator"
+
+[rule.source]
+regulation = "NERC CIP-005-7"
+article = "Part 2.2"
+text = "Require multi-factor authentication for all Interactive Remote Access sessions."
+
+[rule.condition]
+type = "boolean_true"
+field = "interactive_access_mfa_verified"
+unit = "boolean_flag"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 2: Intermediate System Routing ─────────────────────────────────────
+
+[[rule]]
+id = "NERC-CIP-005-2"
+name = "Intermediate System Traversal"
+description = "Remote access must route through a defined Intermediate System (jump host) rather than connecting directly to the BES Cyber Asset."
+category = "network_security"
+severity = "high"
+entity_type = "utility_operator"
+
+[rule.source]
+regulation = "NERC CIP-005-7"
+article = "Part 2.1"
+text = "Utilize an Intermediate System such that the Cyber Asset initiating Interactive Remote Access does not directly access an applicable Cyber System."
+
+[rule.condition]
+type = "boolean_true"
+field = "intermediate_system_used"
+unit = "boolean_flag"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"

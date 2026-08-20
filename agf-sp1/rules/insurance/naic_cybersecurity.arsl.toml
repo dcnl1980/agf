@@ -1,0 +1,67 @@
+# File: rules/insurance/naic_cybersecurity.arsl.toml
+# AGF Rule Specification Language (ARSL) v0.1.0
+# NAIC Insurance Data Security Model Law (MDL-668)
+
+[metadata]
+schema_version = "0.1.0"
+jurisdiction = "US"
+regulator = "NAIC / State Departments of Insurance"
+regulation = "NAIC MDL-668"
+regulation_ref = "Insurance Data Security Model Law"
+effective_date = "2017-10-24"
+last_updated = "2026-04-01"
+author = "AGF Compliance Team"
+review_status = "draft"
+
+[metadata.source]
+title = "Insurance Data Security Model Law"
+url = "https://content.naic.org/cipr_topics/topic_cybersecurity.htm"
+section = "Section 4. Information Security Program"
+
+# ─── Rule 1: Encryption of Nonpublic Information ─────────────────────────────
+
+[[rule]]
+id = "NAIC-SEC-001"
+name = "Encryption of Nonpublic Information at Rest"
+description = "Requires encryption of nonpublic information in transit and at rest to protect consumer data."
+category = "data_security"
+severity = "critical"
+entity_type = "licensee"
+
+[rule.source]
+regulation = "NAIC MDL-668"
+article = "Section 4(D)(2)(h)"
+text = "Implement encryption to protect Nonpublic Information in transit over external routing networks and stored on portable computing or storage devices or media."
+
+[rule.condition]
+type = "boolean_true"
+field = "encryption_active"
+unit = "boolean_flag"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 2: Multi-Factor Authentication (MFA) ───────────────────────────────
+
+[[rule]]
+id = "NAIC-SEC-002"
+name = "MFA for Nonpublic Information Access"
+description = "Implement multi-factor authentication for any individual accessing nonpublic information."
+category = "access_control"
+severity = "critical"
+entity_type = "licensee"
+
+[rule.source]
+regulation = "NAIC MDL-668"
+article = "Section 4(D)(2)(g)"
+text = "Use effective controls, which may include Multi-Factor Authentication procedures for any individual accessing Nonpublic Information."
+
+[rule.condition]
+type = "boolean_true"
+field = "mfa_verified"
+unit = "boolean_flag"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"

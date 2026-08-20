@@ -1,0 +1,124 @@
+# Full local stack: MinIO (S3-compatible), AGF kernel, control plane (SQLite DB on a named volume),
+# website (nginx → same-origin /api → control plane).
+#
+#   cp .env.example .env   # optional: set secrets
+#   docker compose up -d --build
+#   open http://127.0.0.1:${WEBSITE_HOST_PORT:-8088}
+#
+# Host ports are read from the repo root `.env` (see .env.example): WEBSITE_HOST_PORT, AGF_KERNEL_HOST_PORT, CONTROL_PLANE_HOST_PORT, MinIO, etc.
+
+services:
+  minio:
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    container_name: agf-minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "${MINIO_S3_API_HOST_PORT:-9000}:9000"
+      - "${MINIO_S3_CONSOLE_HOST_PORT:-9001}:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - agf-dev
+
+  agf-kernel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: agf-server:dev
+    container_name: agf-kernel
+    ports:
+      - "${AGF_KERNEL_HOST_PORT:-3036}:3000"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    user: "65532:65532"
+    environment:
+      - RUST_LOG=agf_server=info,tower_http=warn
+    volumes:
+      - ./agf-sp1/rules:/app/rules:ro
+    networks:
+      - agf-dev
+    # Distroless has no healthcheck tool; first evaluate may need a few seconds after up
+
+  control-plane:
+    build:
+      context: .
+      dockerfile: control-plane/Dockerfile
+    image: agf-control-plane:dev
+    container_name: agf-control-plane
+    ports:
+      - "${CONTROL_PLANE_HOST_PORT:-4046}:4000"
+    environment:
+      PORT: "4000"
+      # Local compose is a development stack; production deploys must set NODE_ENV=production
+      # (image default) so weak secrets / SKIP_ARSL are refused.
+      NODE_ENV: ${CONTROL_PLANE_NODE_ENV:-development}
+      CONTROL_PLANE_DATA: /data
+      AGF_SP1_ROOT: /agf-sp1
+      AGF_KERNEL_URL: http://agf-kernel:3000
+      CONTROL_PLANE_JWT_SECRET: ${CONTROL_PLANE_JWT_SECRET:-dev-docker-compose-change-in-prod-32ch}
+      # Rules validation: host must build arsl-validate under agf-sp1/target, or skip in dev
+      CONTROL_PLANE_SKIP_ARSL_VALIDATE: ${CONTROL_PLANE_SKIP_ARSL_VALIDATE:-1}
+    volumes:
+      - control_plane_data:/data
+      - ./agf-sp1:/agf-sp1:ro
+    depends_on:
+      - agf-kernel
+    networks:
+      - agf-dev
+    restart: unless-stopped
+
+  # Optional Phase B: read-only HTTP index for the community catalog (website nginx → /catalog/)
+  catalog-api:
+    build:
+      context: .
+      dockerfile: catalog-api/Dockerfile
+    image: agf-catalog-api:dev
+    container_name: agf-catalog-api
+    ports:
+      - "${CATALOG_HOST_PORT:-4055}:4055"
+    environment:
+      PORT: "4055"
+      AGF_CATALOG_JSON: /data/community-catalog.json
+    volumes:
+      - ./catalog/community-catalog.json:/data/community-catalog.json:ro
+    networks:
+      - agf-dev
+    restart: unless-stopped
+
+  website:
+    build:
+      context: .
+      dockerfile: website/Dockerfile
+    image: agf-website:dev
+    container_name: agf-website
+    ports:
+      - "${WEBSITE_HOST_PORT:-8088}:8080"
+    # Writable /tmp for nginx proxy/client temp dirs (avoids "no space" on full host disks)
+    tmpfs:
+      - /tmp:rw,mode=1777
+    depends_on:
+      - control-plane
+      - catalog-api
+    networks:
+      - agf-dev
+    restart: unless-stopped
+
+volumes:
+  minio_data:
+  control_plane_data:
+
+networks:
+  agf-dev:
+    driver: bridge

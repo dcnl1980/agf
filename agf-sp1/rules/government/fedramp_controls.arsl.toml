@@ -1,0 +1,43 @@
+# File: rules/government/fedramp_controls.arsl.toml
+# AGF Rule Specification Language (ARSL) v0.1.0
+# FedRAMP - Federal Risk and Authorization Management Program
+
+[metadata]
+schema_version = "0.1.0"
+jurisdiction = "US"
+regulator = "FedRAMP PMO"
+regulation = "FedRAMP"
+regulation_ref = "FedRAMP Security Controls Baseline"
+effective_date = "2011-12-08"
+last_updated = "2026-04-01"
+author = "AGF Compliance Team"
+review_status = "draft"
+
+[metadata.source]
+title = "Federal Risk and Authorization Management Program"
+url = "https://www.fedramp.gov"
+section = "System and Communications Protection (SC)"
+
+# ─── Rule 1: FIPS 140-2 Validated Encryption ────────────────────────────────
+
+[[rule]]
+id = "FEDRAMP-SC-013"
+name = "Cryptographic Protection (FIPS 140-2)"
+description = "Information system must implement FIPS-validated cryptographic modules for protecting confidentiality and integrity of information at rest and in transit."
+category = "cryptography"
+severity = "critical"
+entity_type = "cloud_service_provider"
+
+[rule.source]
+regulation = "FedRAMP / NIST SP 800-53"
+article = "SC-13 Cryptographic Protection"
+text = "The information system implements cryptographic uses and type of cryptography required for each use in accordance with applicable federal laws, Executive Orders, directives, policies, regulations, and standards."
+
+[rule.condition]
+type = "boolean_true"
+field = "fips_140_2_encryption"
+unit = "boolean"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"

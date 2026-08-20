@@ -1,0 +1,43 @@
+# File: rules/healthcare/cfr42_part2.arsl.toml
+# AGF Rule Specification Language (ARSL) v0.1.0
+# 42 CFR Part 2 - Confidentiality of Substance Use Disorder Patient Records
+
+[metadata]
+schema_version = "0.1.0"
+jurisdiction = "US"
+regulator = "SAMHSA"
+regulation = "42 CFR Part 2"
+regulation_ref = "42 CFR Part 2"
+effective_date = "2024-04-16"
+last_updated = "2026-04-01"
+author = "AGF Compliance Team"
+review_status = "draft"
+
+[metadata.source]
+title = "Confidentiality of Substance Use Disorder (SUD) Patient Records"
+url = "https://www.samhsa.gov"
+section = "Subpart C - Disclosures with Patient Consent"
+
+# ─── Rule 1: SUD Record Disclosure Consent ────────────────────────────────
+
+[[rule]]
+id = "CFR42-SUD-001"
+name = "SUD Record Disclosure Consent Gate"
+description = "Patient records related to substance use disorder require explicit written consent for disclosure."
+category = "disclosure_consent"
+severity = "critical"
+entity_type = "sud_treatment_program"
+
+[rule.source]
+regulation = "42 CFR Part 2"
+article = "§ 2.31 Consent requirements"
+text = "A written consent to a disclosure under the regulations in this part must include..."
+
+[rule.condition]
+type = "boolean_true"
+field = "sud_disclosure_consent"
+unit = "boolean"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"

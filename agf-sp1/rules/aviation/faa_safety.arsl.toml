@@ -1,0 +1,70 @@
+# File: rules/aviation/faa_safety.arsl.toml
+# AGF Rule Specification Language (ARSL) v0.1.0
+# FAA - Software Considerations in Airborne Systems
+
+[metadata]
+schema_version = "0.1.0"
+jurisdiction = "US"
+regulator = "FAA"
+regulation = "DO-178C"
+regulation_ref = "RTCA DO-178C / FAR Part 121"
+effective_date = "2011-12-13"
+last_updated = "2026-04-01"
+author = "AGF Compliance Team"
+review_status = "draft"
+
+[metadata.source]
+title = "Software Considerations in Airborne Systems and Equipment Certification"
+url = "https://www.faa.gov"
+section = "Autonomous Navigation Guardrails"
+
+# ─── Rule 1: Minimum Safe Altitude (MSA) Warning ─────────────────────────────
+
+[[rule]]
+id = "FAA-MSA-001"
+name = "Minimum Safe Altitude Overrides restricted"
+description = "An autonomous aviation agent (UAV/Autopilot) must never calculate or issue a flight waypoint altitude beneath the defined Minimum Safe Altitude (MSA) floor."
+category = "flight_safety"
+severity = "critical"
+entity_type = "aircraft_operator"
+
+[rule.source]
+regulation = "FAA Part 91 / DO-178C (Safe States)"
+article = "91.119 Minimum safe altitudes: General."
+text = "Except when necessary for takeoff or landing, no person may operate an aircraft below the following altitudes... an altitude of 1,000 feet above the highest obstacle."
+
+[rule.condition]
+type = "minimum"
+field = "waypoint_altitude_ft"
+threshold = 1000
+unit = "feet"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 2: Emergency Transponder Squawk Integrity ──────────────────────────
+
+[[rule]]
+id = "FAA-XPNDR-001"
+name = "Transponder Data Integrity"
+description = "During flight, software must not disable the transponder unless explicitly authorized by ATC (Air Traffic Control)."
+category = "flight_safety"
+severity = "high"
+entity_type = "aircraft_operator"
+
+[rule.source]
+regulation = "FAA Part 91"
+article = "91.215 ATC transponder and altitude reporting equipment and use"
+text = "Each person operating an aircraft... must operate the transponder, including Mode C equipment if installed."
+
+[rule.condition]
+# Value must be 1 (True) to pass
+type = "equals"
+field = "transponder_active"
+threshold = 1
+unit = "boolean_flag"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"

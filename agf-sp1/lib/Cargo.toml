@@ -1,0 +1,10 @@
+[package]
+name = "agf-lib"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
+
+[target.'cfg(not(target_os = "zkvm"))'.dependencies]
+toml = "0.8"

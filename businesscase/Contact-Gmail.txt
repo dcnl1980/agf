@@ -1,0 +1,26 @@
+Hi Christiaan,
+
+Looking forward to our call tomorrow. I have invented the AGF which I believe to be bulletproof IP featuring a 1st to market novel architecture that chains legal ontology, RISC-V, and ZK proof. With a patent pending, no prior art, a highly technical barrier, and a strong regulatory moat, I truly believe this to be foundational AI, and highly valuable.
+
+It solves a problem previously believed to be theoretically impossible: turning natural-language legal text into deterministic, verifiable machine logic that can be enforced via ZK proofs.
+
+1. So the LCC (Legal Code Compiler) ingests statutory law, regulatory guidance or policy documents
+
+2. The LCC uses a domain specific legal ontology  (not an LLM) to map clauses to formal predicates. It treats law as a finite state rule system, it uses symbolic language and resolves ambiguity via regulator- published interpretations.
+
+3. Each legal rule is compiled into RISC-V assembly—a hardware-agnostic instruction set. This bytecode is provably equivalent to the source legal clause via formal verification (eg. Coq or Lean)
+
+4. The RISC-V bytecode runs inside SP1 and generates a ZK proof that: the rule was evaluated correctly; the input data was valid; and the output followed deterministically.
+
+5. Input data is fed into the SP1 runtime via a TEE (AWS Nitro or Azure SEV). The TEE attests that data hasn't been tampered with and the LCC rule was applied in isolation.
+
+The AGF is technically unique and legally indispensable because it compiles law into mathematics. That's why it's incredibly valuable to hyperscalers. It is technically neutral avoiding vendor lock-in. RISC-V makes the AGF vision possible.
+
+Attached are some collaterals so you have as much information as possible. I already have a boutique bank exploring a licence or sale to a hyperscaler as well as a VC keen to invest. I have been holding off until I find the right person to take this forward. I anticipate 20 weeks to MVP or thereabouts.
+
+Regards - Dan
+--
+Dan Padbury
+Founder & CEO
+NeuroCluster
+Learn about us

@@ -1,0 +1,31 @@
+name: enterprise-ci
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install
+        run: npm install
+
+      - name: Check plugin syntax
+        run: npm run check
+
+      - name: Build enterprise plugin
+        run: npm run build
+
+      - name: Build enterprise image
+        run: docker build -f Dockerfile.enterprise -t agf-control-plane-enterprise:ci .

@@ -1,0 +1,10 @@
+# Used when the repository root is the Docker build context (compose, kernel, control-plane, website, catalog-api).
+# Do not list top-level app dirs (agf-sp1, control-plane, catalog-api, website, catalog) here — they are required for COPY in Dockerfiles.
+.git
+**/node_modules
+**/dist
+**/target
+examples
+templates
+docs
+scripts

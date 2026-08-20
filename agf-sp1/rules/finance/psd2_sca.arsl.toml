@@ -1,0 +1,43 @@
+# File: rules/finance/psd2_sca.arsl.toml
+# AGF Rule Specification Language (ARSL) v0.1.0
+# PSD2 - Strong Customer Authentication (SCA)
+
+[metadata]
+schema_version = "0.1.0"
+jurisdiction = "EU"
+regulator = "EBA"
+regulation = "PSD2"
+regulation_ref = "Directive (EU) 2015/2366"
+effective_date = "2019-09-14"
+last_updated = "2026-04-01"
+author = "AGF Compliance Team"
+review_status = "draft"
+
+[metadata.source]
+title = "Revised Payment Services Directive (PSD2)"
+url = "https://www.eba.europa.eu/regulation-and-policy/payment-services-and-electronic-money"
+section = "Article 97 - Authentication"
+
+# ─── Rule 1: Strong Customer Authentication Gate ─────────────────────────────
+
+[[rule]]
+id = "PSD2-SCA-001"
+name = "Electronic Payment SCA Gate"
+description = "Providers must ensure that electronic payments are authenticated using multi-factor Strong Customer Authentication (SCA) unless exempted."
+category = "authentication"
+severity = "critical"
+entity_type = "payment_service_provider"
+
+[rule.source]
+regulation = "PSD2 / EBA RTS"
+article = "Article 97(1)(b)"
+text = "Member States shall ensure that a payment service provider applies strong customer authentication where the payer initiates an electronic payment transaction."
+
+[rule.condition]
+type = "boolean_true"
+field = "sca_authenticated"
+unit = "boolean_flag"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"

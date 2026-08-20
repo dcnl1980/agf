@@ -1,0 +1,42 @@
+# AGF Network Policy — intended zero-trust isolation
+# This manifest only has teeth on clusters with a policy-enforcing CNI.
+# On the current remote cluster, this file alone is not sufficient to prove
+# deny-all egress in practice; see the gpu-scoped truth profile for the
+# currently validated fail-closed path.
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: agf-evaluator-isolation
+  namespace: agf
+spec:
+  podSelector:
+    matchLabels:
+      app: agf-evaluator
+
+  policyTypes:
+    - Ingress
+    - Egress
+
+  ingress:
+    # Allow inbound HTTP from within the agf namespace (e.g. test jobs)
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: agf
+      ports:
+        - protocol: TCP
+          port: 3000
+    # Allow inbound HTTP from the DMZ namespace (API gateway / ingress)
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: dmz
+      ports:
+        - protocol: TCP
+          port: 3000
+
+  egress:
+    # NO egress rules — evaluator cannot initiate outbound connections.
+    # DNS is also blocked (evaluator only reads files from its own FS).
+    []

@@ -1,0 +1,25 @@
+{
+  "$schema": "./community-catalog.schema.json",
+  "catalogVersion": "1",
+  "generatedAt": "2026-04-23T00:00:00.000Z",
+  "entries": [
+    {
+      "id": "dev.neurocluster.finance.kyc-standard-onboarding",
+      "summary": "Baseline KYC onboarding controls for financial-services customer onboarding flows.",
+      "maintainer": "neurocluster",
+      "license": "Apache-2.0",
+      "tags": ["finance", "kyc", "onboarding"],
+      "jurisdiction": ["global"],
+      "versions": [
+        {
+          "version": "2026.04.0",
+          "digest": "sha256:9b89fca94a088f992a0bda922cb3c663896ee2d74f00bef1d3c9c04ee3b8a76e",
+          "ruleFiles": ["rules/finance/kyc/standard_onboarding.arsl.toml"],
+          "sourceUrl": "https://github.com/neurocluster/agf/blob/main/agf-sp1/rules/finance/kyc/standard_onboarding.arsl.toml",
+          "publishedAt": "2026-04-23T00:00:00.000Z",
+          "note": "Digest generated with scripts/marketplace-compute-digest.mjs using control-plane digest logic."
+        }
+      ]
+    }
+  ]
+}

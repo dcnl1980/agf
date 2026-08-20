@@ -1,0 +1,9 @@
+[package]
+version = "0.1.0"
+name = "agf-program"
+edition = "2021"
+
+[dependencies]
+sp1-zkvm = { version = "6.0.1" }
+agf-lib = { path = "../lib" }
+serde = { version = "1.0", default-features = false, features = ["derive"] }

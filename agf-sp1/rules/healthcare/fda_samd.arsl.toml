@@ -1,0 +1,44 @@
+# File: rules/healthcare/fda_samd.arsl.toml
+# AGF Rule Specification Language (ARSL) v0.1.0
+# FDA - Software as a Medical Device (SaMD) Algorithmic Controls
+
+[metadata]
+schema_version = "0.1.0"
+jurisdiction = "US"
+regulator = "FDA"
+regulation = "FDA SaMD Framework"
+regulation_ref = "21 CFR Part 820"
+effective_date = "2022-09-28"
+last_updated = "2026-04-01"
+author = "AGF Compliance Team"
+review_status = "draft"
+
+[metadata.source]
+title = "Clinical Decision Support Software and SaMD Pre-Cert"
+url = "https://www.fda.gov/medical-devices/digital-health-center-excellence/software-medical-device-samd"
+section = "Clinical Evaluation"
+
+# ─── Rule 1: AI Clinical Confidence Score Minimum ────────────────────────────
+
+[[rule]]
+id = "FDA-SAMD-001"
+name = "Algorithm Confidence Threshold"
+description = "Diagnostic AI models must meet a minimum clinical confidence score threshold before outputting a diagnostic recommendation to practitioners."
+category = "clinical_safety"
+severity = "critical"
+entity_type = "samd_manufacturer"
+
+[rule.source]
+regulation = "IMDRF SaMD N41"
+article = "Section 6.2 - Analytical Validation"
+text = "Analytical validation measures the ability of a SaMD to correctly and reliably process input data to generate appropriate output data with the required level of accuracy."
+
+[rule.condition]
+type = "minimum"
+field = "ai_confidence_score_percentage"
+threshold = 85
+unit = "percentage"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"

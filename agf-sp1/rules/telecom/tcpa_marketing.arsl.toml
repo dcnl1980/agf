@@ -1,0 +1,69 @@
+# File: rules/telecom/tcpa_marketing.arsl.toml
+# AGF Rule Specification Language (ARSL) v0.1.0
+# TCPA - Telephone Consumer Protection Act
+
+[metadata]
+schema_version = "0.1.0"
+jurisdiction = "US"
+regulator = "FCC"
+regulation = "TCPA"
+regulation_ref = "47 U.S.C. § 227"
+effective_date = "1991-12-20"
+last_updated = "2026-04-01"
+author = "AGF Compliance Team"
+review_status = "draft"
+
+[metadata.source]
+title = "Telephone Consumer Protection Act"
+url = "https://www.fcc.gov/general/telemarketing-and-robocalls"
+section = "Restrictions on the use of automated telephone equipment"
+
+# ─── Rule 1: National Do Not Call Registry Gate ──────────────────────────────
+
+[[rule]]
+id = "TCPA-DNC-001"
+name = "National Do Not Call Registry Verification"
+description = "Telemarketing AI voice agents and automated dialers must not initiate contact with numbers listed on the National Do Not Call Registry."
+category = "consumer_protection"
+severity = "critical"
+entity_type = "telemarketer"
+
+[rule.source]
+regulation = "TCPA"
+article = "47 CFR § 64.1200(c)"
+text = "No person or entity shall initiate any telephone solicitation to... A residential telephone subscriber who has registered his or her telephone number on the national do-not-call registry."
+
+[rule.condition]
+# The flag must equal 0 (meaning NOT on the registry) to pass and allow the call
+type = "equals"
+field = "do_not_call_status"
+threshold = 0
+unit = "boolean_flag"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 2: Express Consent for Autodialing ─────────────────────────────────
+
+[[rule]]
+id = "TCPA-CONSENT-001"
+name = "Automated Dialing Prior Express Written Consent"
+description = "Requires prior express written consent before an AI agent can deliver an artificial or prerecorded voice message to a mobile number."
+category = "consumer_protection"
+severity = "high"
+entity_type = "telemarketer"
+
+[rule.source]
+regulation = "TCPA"
+article = "47 CFR § 64.1200(a)(2)"
+text = "No person or entity may initiate any telephone call... using an automatic telephone dialing system or an artificial or prerecorded voice... to any telephone number assigned to a paging service, cellular telephone service"
+
+[rule.condition]
+type = "boolean_true"
+field = "prior_express_written_consent"
+unit = "boolean_flag"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"

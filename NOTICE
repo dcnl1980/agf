@@ -1,0 +1,10 @@
+AGF (Agentic Governance Framework)
+Copyright 2026 NeuroCluster
+
+This product includes software developed by third parties.
+See dependency manifests and lock files for package-specific attribution:
+- /Users/cvsteenbergen/Code/agf/control-plane/package-lock.json
+- /Users/cvsteenbergen/Code/agf/website/package-lock.json
+
+Any marks and product names referenced in this repository remain the property
+of their respective owners.

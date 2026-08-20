@@ -1,0 +1,272 @@
+# File: rules/fca/consumer_duty.arsl.toml
+# AGF Rule Specification Language (ARSL) v0.1.0
+# FCA Consumer Duty — Prudential Requirements
+# Reference: AGF OpenSpec v1.2, ARSL Spec v0.1.0
+
+[metadata]
+schema_version = "0.1.0"
+jurisdiction = "UK"
+regulator = "FCA"
+regulation = "Consumer Duty"
+regulation_ref = "PS22/9"
+effective_date = "2023-07-31"
+last_updated = "2026-03-07"
+author = "AGF Compliance Team"
+review_status = "approved"
+
+[metadata.source]
+title = "FCA Consumer Duty: Final Rules & Capital Requirements Regulation"
+url = "https://www.fca.org.uk/publications/policy-statements/ps22-9-new-consumer-duty"
+section = "Prudential Requirements (CRR/Solvency II)"
+
+# ─── Rule 1: Capital Adequacy ────────────────────────────────
+
+[[rule]]
+id = "FCA-CD-001"
+name = "Capital Adequacy Ratio"
+description = "Total capital must be at least 8% of risk-weighted assets"
+category = "capital"
+severity = "critical"
+entity_type = "uk_bank"
+
+[rule.source]
+regulation = "CRR"
+article = "Article 92(1)(c)"
+text = "An institution shall at all times satisfy a total capital ratio of 8%"
+
+[rule.condition]
+type = "minimum"
+field = "capital_ratio"
+threshold = 800
+unit = "bps"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 2: Liquidity Coverage ──────────────────────────────
+
+[[rule]]
+id = "FCA-CD-002"
+name = "Liquidity Coverage Ratio"
+description = "LCR must be at least 100%"
+category = "liquidity"
+severity = "critical"
+entity_type = "uk_bank"
+
+[rule.source]
+regulation = "CRR"
+article = "Article 412"
+text = "Institutions shall hold liquid assets sufficient to cover net liquidity outflows"
+
+[rule.condition]
+type = "minimum"
+field = "liquidity_coverage"
+threshold = 10000
+unit = "bps"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 3: Leverage Ratio ─────────────────────────────────
+
+[[rule]]
+id = "FCA-CD-003"
+name = "Leverage Ratio"
+description = "Leverage ratio must be at least 3%"
+category = "capital"
+severity = "high"
+entity_type = "uk_bank"
+
+[rule.source]
+regulation = "CRR2"
+article = "Article 92(1)(d)"
+text = "Institutions shall satisfy a leverage ratio of 3%"
+
+[rule.condition]
+type = "minimum"
+field = "leverage_ratio"
+threshold = 300
+unit = "bps"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 4: Net Stable Funding ─────────────────────────────
+
+[[rule]]
+id = "FCA-CD-004"
+name = "Net Stable Funding Ratio"
+description = "NSFR must be at least 100%"
+category = "liquidity"
+severity = "critical"
+entity_type = "uk_bank"
+
+[rule.source]
+regulation = "CRR2"
+article = "Article 428a"
+text = "Institutions shall ensure stable funding covers the required stable funding"
+
+[rule.condition]
+type = "minimum"
+field = "net_stable_funding"
+threshold = 10000
+unit = "bps"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 5: Large Exposure Limit ───────────────────────────
+
+[[rule]]
+id = "FCA-CD-005"
+name = "Large Exposure Limit"
+description = "No single exposure shall exceed 25% of own funds"
+category = "exposure"
+severity = "high"
+entity_type = "uk_bank"
+
+[rule.source]
+regulation = "CRR"
+article = "Article 395(1)"
+text = "An institution shall not incur an exposure to a client exceeding 25% of its eligible capital"
+
+[rule.condition]
+type = "range"
+field = "large_exposure"
+min_threshold = 0
+max_threshold = 2500
+unit = "bps"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 6: DORA ICT Reporting ─────────────────────────────
+
+[[rule]]
+id = "DORA-ICT-001"
+name = "ICT Incident Reporting Deadline"
+description = "Major ICT incidents must be reported within 4 hours"
+category = "incident_response"
+severity = "high"
+entity_type = "uk_bank"
+
+[rule.source]
+regulation = "DORA"
+article = "Article 19"
+text = "Financial entities shall report major ICT-related incidents within 4 hours"
+
+[rule.condition]
+type = "range"
+field = "ict_report_time"
+min_threshold = 0
+max_threshold = 14400
+unit = "seconds"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "escalate"
+
+# ─── Rule 7: Solvency ───────────────────────────────────────
+
+[[rule]]
+id = "FCA-CD-006"
+name = "Solvency Ratio"
+description = "Solvency ratio must be at least 150%"
+category = "capital"
+severity = "critical"
+entity_type = "uk_bank"
+
+[rule.source]
+regulation = "Solvency II"
+article = "Article 100"
+text = "Insurance and reinsurance undertakings shall hold eligible own funds covering the SCR"
+
+[rule.condition]
+type = "minimum"
+field = "solvency_ratio"
+threshold = 15000
+unit = "bps"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 8: Tier 1 Capital ─────────────────────────────────
+
+[[rule]]
+id = "FCA-CD-007"
+name = "Tier 1 Capital Ratio"
+description = "CET1 capital ratio must be at least 6%"
+category = "capital"
+severity = "critical"
+entity_type = "uk_bank"
+
+[rule.source]
+regulation = "CRR"
+article = "Article 92(1)(b)"
+text = "Institutions shall satisfy a Tier 1 capital ratio of 6%"
+
+[rule.condition]
+type = "minimum"
+field = "tier1_capital"
+threshold = 600
+unit = "bps"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
+
+# ─── Rule 9: Counter-cyclical Buffer ────────────────────────
+
+[[rule]]
+id = "FCA-CD-008"
+name = "Counter-Cyclical Capital Buffer"
+description = "CCyB must be maintained at the rate set by the FCA"
+category = "capital"
+severity = "medium"
+entity_type = "uk_bank"
+
+[rule.source]
+regulation = "CRR"
+article = "Article 130"
+text = "Institutions shall maintain a countercyclical capital buffer"
+
+[rule.condition]
+type = "minimum"
+field = "countercyclical_buffer"
+threshold = 0
+unit = "bps"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "warn"
+
+# ─── Rule 10: Stress Test Capital ────────────────────────────
+
+[[rule]]
+id = "FCA-CD-009"
+name = "Stressed Capital Adequacy"
+description = "Capital must remain above 5.5% under adverse stress scenario"
+category = "capital"
+severity = "critical"
+entity_type = "uk_bank"
+
+[rule.source]
+regulation = "FCA Prudential Sourcebook"
+article = "BIPRU 2.2.12"
+text = "Firms must maintain capital above the stressed minimum in adverse scenarios"
+
+[rule.condition]
+type = "minimum"
+field = "stress_test_capital"
+threshold = 550
+unit = "bps"
+
+[rule.enforcement]
+on_pass = "allow"
+on_fail = "block"
