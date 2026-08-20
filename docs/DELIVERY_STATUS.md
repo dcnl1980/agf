@@ -13,9 +13,9 @@ Last updated: 2026-08-20 (autonomous delivery cycle)
 | Current state | Forge live; GHCR publish workflow; non-root CP; E2E+smoke verified |
 | Production status | Production candidate — community self-host via compose/k8s/GHCR |
 | Priority | P0 |
-| Completion | ~95% |
-| Production readiness | ~90/100 |
-| Status | 🟡 Needs attention (hardware TEE + first GHCR package visibility) |
+| Completion | ~96% |
+| Production readiness | ~91/100 |
+| Status | 🟡 Needs attention (hardware TEE; multi-arch images) |
 | Git | https://github.com/dcnl1980/agf |
 | Last validation | CP 9/9 · expanded verify-stack · GHCR workflow added |
 
@@ -29,7 +29,7 @@ Last updated: 2026-08-20 (autonomous delivery cycle)
 - [x] Ops runbook + control-plane k8s
 - [x] Git remote (GitHub)
 - [x] Image publish pipeline (GHCR workflow)
-- [ ] First successful GHCR publish + public package visibility (CI run)
+- [x] GHCR publish succeeded (amd64; multi-arch workflow queued)
 - [ ] Non-mock TEE on hardware (cluster-dependent)
 
 ## Gap register
